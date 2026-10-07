@@ -35,6 +35,7 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 ### 4. Políticas – Ajustes → Políticas
 - [ ] Pegar `politicas/devoluciones.html` en "Política de reembolso" (botón `<>` para HTML).
 - [ ] Pegar `politicas/envios.html` en "Política de envío".
+- [ ] Pegar `politicas/terminos.html` en "Términos del servicio" (sustituye el texto que dice "operado por Tienda").
 
 ### 5. Recuperar checkouts abandonados – Marketing → Automatizaciones
 - [ ] Activar plantilla **"Recuperar checkout abandonado"** (1 email a la 1 h, otro a las 24 h).
