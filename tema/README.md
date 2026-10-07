@@ -1,4 +1,4 @@
-# Tema v6 – descuentos visibles (15% bienvenida · 20% por 2 prendas)
+# Tema v7 – hero con marca de fondo
 
 Archivos subidos al tema **"Lia Femme – v6 descuentos 15/20 (Claude)"** (sin publicar),
 que es una copia del tema publicado "Lia Femme" a 7 oct 2026.
@@ -15,3 +15,6 @@ que es una copia del tema publicado "Lia Femme" a 7 oct 2026.
 Clientas con sesión iniciada y pedidos previos no ven el 10% (el código es de un solo uso por cliente): ven solo la oferta de 2 prendas.
 
 Si cambias los descuentos en Shopify, cambia los porcentajes en el bloque "LF · Precio con descuento" (editor del tema → ficha de producto) y en `lf-card-offer.liquid`.
+
+## v7 (hero)
+`sections/lf-hero.liquid`: nombre "LIA FEMME" grande y translúcido detrás del texto de la portada, con línea "Moda femenina". Ajustable en el editor (texto, opacidad 10–70%, arriba/centro, mostrar u ocultar). Maquetas en `previews/`.
