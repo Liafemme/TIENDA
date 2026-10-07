@@ -1,0 +1,99 @@
+{%- comment -%}
+  Aplica automáticamente un código de descuento (p. ej. BIENVENIDA10) en el carrito
+  y lo anuncia con un popup de bienvenida.
+  - No se aplica a clientes con sesión iniciada que ya tienen pedidos.
+  - El código está limitado a un uso por cliente en Shopify, así que solo vale en la primera compra.
+  - Si el carrito tiene 2+ productos, Shopify aplica el descuento automático del 15% (sustituye al 10%).
+  - El popup sale una vez cada 24 h, nunca en el carrito, y se cierra con la X, el botón o tocando fuera.
+{%- endcomment -%}
+{%- liquid
+  assign code = code | strip
+  assign skip = false
+  if customer and customer.orders_count > 0
+    assign skip = true
+  endif
+-%}
+{%- if code != blank and skip == false -%}
+<div class="lf-pop" id="lf-pop" role="dialog" aria-modal="true" aria-labelledby="lf-pop-title" hidden>
+  <div class="lf-pop__box">
+    <button type="button" class="lf-pop__x" data-lf-close aria-label="Cerrar">×</button>
+    <p class="lf-pop__eyebrow">¡Ups! Tienes un regalo</p>
+    <h2 class="lf-pop__title" id="lf-pop-title">10% de descuento<br>en tu primera compra</h2>
+    <p class="lf-pop__code">Código <strong>{{ code }}</strong> · ya activado</p>
+    <p class="lf-pop__txt">Se aplica solo en el carrito, no tienes que copiar nada.<br>Y si te llevas <strong>2 prendas, ahorras un 15%</strong>.</p>
+    <button type="button" class="lf-pop__btn" data-lf-close>¡Lo quiero! Ver prendas</button>
+    <p class="lf-pop__small">Envío gratis con seguimiento · 30 días para devoluciones</p>
+  </div>
+</div>
+<style>
+.lf-pop{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(30,26,23,.55)}
+.lf-pop[hidden]{display:none}
+.lf-pop__box{position:relative;width:100%;max-width:380px;background:#fbf8f4;color:#1e1a17;border-radius:14px;padding:30px 24px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:lf-pop-in .35s ease}
+@keyframes lf-pop-in{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.lf-pop__x{position:absolute;top:8px;right:10px;background:none;border:0;font-size:26px;line-height:1;color:#4a433d;cursor:pointer;padding:6px}
+.lf-pop__eyebrow{margin:0 0 6px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9c5b3e}
+.lf-pop__title{margin:0 0 14px;font-family:var(--font-heading--family);font-size:28px;line-height:1.15;font-weight:400}
+.lf-pop__code{display:inline-block;margin:0 0 12px;padding:8px 14px;border:1px dashed #9c5b3e;border-radius:8px;background:#fff;font-size:14px}
+.lf-pop__code strong{color:#a23b2c;letter-spacing:.06em}
+.lf-pop__txt{margin:0 0 18px;font-size:14px;line-height:1.5;color:#4a433d}
+.lf-pop__txt strong{color:#1e1a17}
+.lf-pop__btn{display:block;width:100%;border:0;border-radius:999px;background:#1e1a17;color:#fbf8f4;font-size:15px;font-weight:600;padding:14px 18px;cursor:pointer}
+.lf-pop__small{margin:12px 0 0;font-size:12px;color:#4a433d}
+</style>
+<script>
+(function () {
+  var CODE = {{ code | json }};
+  var KEY = 'lf_auto_' + CODE;
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function apply() {
+    // 1) Guarda el código en la sesión (se aplica también en el checkout)
+    fetch('/discount/' + encodeURIComponent(CODE), { credentials: 'same-origin' }).catch(function () {});
+    // 2) Lo añade al carrito para que se vea aplicado
+    fetch('/cart/update.js', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ discount: CODE })
+    }).then(function (r) { return r.json(); }).then(function (cart) {
+      document.dispatchEvent(new CustomEvent('cart:refresh', { detail: cart }));
+    }).catch(function () {});
+  }
+
+  // Una vez por visita, para no pisar otro código que la clienta escriba después
+  var sessionKey = KEY + '_s';
+  var done = false;
+  try { done = sessionStorage.getItem(sessionKey) === '1'; } catch (e) {}
+  if (!done) {
+    apply();
+    try { sessionStorage.setItem(sessionKey, '1'); } catch (e) {}
+  }
+
+  // Popup: una vez cada 24 h y nunca en el carrito
+  var pop = document.getElementById('lf-pop');
+  if (!pop) return;
+  var last = parseInt(read(KEY + '_seen') || '0', 10);
+  var isCart = /\/cart(\/|$)/.test(location.pathname);
+  if (isCart || Date.now() - last < 24 * 60 * 60 * 1000) return;
+
+  function close() {
+    pop.hidden = true;
+    document.removeEventListener('keydown', onKey);
+  }
+  function onKey(e) { if (e.key === 'Escape') close(); }
+
+  pop.addEventListener('click', function (e) {
+    if (e.target === pop || e.target.hasAttribute('data-lf-close')) close();
+  });
+
+  setTimeout(function () {
+    pop.hidden = false;
+    store(KEY + '_seen', String(Date.now()));
+    document.addEventListener('keydown', onKey);
+    var btn = pop.querySelector('.lf-pop__btn');
+    if (btn) btn.focus({ preventScroll: true });
+  }, 3500);
+})();
+</script>
+{%- endif -%}

@@ -1,0 +1,92 @@
+{%- comment -%}
+  Muestra en la ficha de producto el precio final con los descuentos que ya existen en Shopify:
+  - Código de bienvenida (se aplica solo en el carrito; ver snippets/lf-autodiscount.liquid)
+  - Descuento automático por 2 prendas
+  Los porcentajes deben coincidir con los descuentos configurados en Shopify → Descuentos.
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  assign p = closest.product
+  assign v = p.selected_or_first_available_variant
+  assign welcome = bs.show_welcome
+  if customer and customer.orders_count > 0
+    assign welcome = false
+  endif
+  assign w_factor = 100 | minus: bs.welcome_pct | divided_by: 100.0
+  assign d_factor = 100 | minus: bs.duo_pct | divided_by: 100.0
+  assign w_price = v.price | times: w_factor | round
+  assign d_price = v.price | times: d_factor | round
+-%}
+{%- if v -%}
+<div
+  class="lf-offer"
+  data-w="{{ w_factor }}"
+  data-d="{{ d_factor }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if welcome -%}
+    <div class="lf-offer__row lf-offer__row--main">
+      <span class="lf-offer__tag">-{{ bs.welcome_pct }}% BIENVENIDA</span>
+      <span class="lf-offer__txt">Tu precio hoy: <strong class="lf-offer__w">{{ w_price | money }}</strong></span>
+    </div>
+    <p class="lf-offer__note">Código <b>{{ bs.code }}</b> ya activado: se aplica solo en el carrito, no tienes que copiar nada.</p>
+  {%- endif -%}
+  {%- if bs.show_duo -%}
+    <div class="lf-offer__row lf-offer__row--duo">
+      <span class="lf-offer__tag lf-offer__tag--alt">-{{ bs.duo_pct }}% x2</span>
+      <span class="lf-offer__txt">Llévate 2 prendas y paga <strong class="lf-offer__d">{{ d_price | money }}</strong> cada una</span>
+    </div>
+  {%- endif -%}
+</div>
+<script>
+  (function () {
+    var box = document.currentScript && document.currentScript.previousElementSibling;
+    if (!box || !box.classList.contains('lf-offer') || box.dataset.ready) return;
+    box.dataset.ready = '1';
+    var fmt = {{ shop.money_format | json }};
+    function money(cents) {
+      var n = (cents / 100).toFixed(2);
+      var parts = n.split('.');
+      var intp = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      var withComma = intp + ',' + parts[1];
+      var withDot = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
+      return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, k) {
+        if (k === 'amount_with_comma_separator') return withComma;
+        if (k === 'amount_no_decimals') return parts[0];
+        if (k === 'amount_no_decimals_with_comma_separator') return intp;
+        return withDot;
+      });
+    }
+    document.addEventListener('variant:update', function (e) {
+      var variant = e.detail && e.detail.resource;
+      if (!variant || typeof variant.price !== 'number') return;
+      var w = box.querySelector('.lf-offer__w');
+      var d = box.querySelector('.lf-offer__d');
+      if (w) w.textContent = money(Math.round(variant.price * parseFloat(box.dataset.w)));
+      if (d) d.textContent = money(Math.round(variant.price * parseFloat(box.dataset.d)));
+    });
+  })();
+</script>
+{%- endif -%}
+<style>
+  .lf-offer{display:grid;gap:8px;margin:6px 0 2px;padding:12px 14px;border:1px dashed #9c5b3e;border-radius:8px;background:#fbf3ec}
+  .lf-offer__row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;line-height:1.35;color:#1e1a17}
+  .lf-offer__row--main .lf-offer__txt{font-size:16px}
+  .lf-offer__row strong{color:#a23b2c;font-weight:700}
+  .lf-offer__tag{flex:0 0 auto;background:#a23b2c;color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 8px;border-radius:999px}
+  .lf-offer__tag--alt{background:#1e1a17}
+  .lf-offer__note{margin:-2px 0 2px;font-size:12px;color:#4a433d}
+</style>
+{% schema %}
+{
+  "name": "LF · Precio con descuento",
+  "settings": [
+    { "type": "checkbox", "id": "show_welcome", "label": "Mostrar precio con código de bienvenida", "default": true },
+    { "type": "text", "id": "code", "label": "Código de bienvenida", "default": "BIENVENIDA10" },
+    { "type": "number", "id": "welcome_pct", "label": "% del código de bienvenida", "default": 10 },
+    { "type": "checkbox", "id": "show_duo", "label": "Mostrar oferta de 2 prendas", "default": true },
+    { "type": "number", "id": "duo_pct", "label": "% al comprar 2 prendas", "default": 15 }
+  ],
+  "presets": [{ "name": "LF · Precio con descuento", "category": "Product" }]
+}
+{% endschema %}
