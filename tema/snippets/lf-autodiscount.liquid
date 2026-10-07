@@ -1,9 +1,9 @@
 {%- comment -%}
-  Aplica automáticamente un código de descuento (p. ej. BIENVENIDA10) en el carrito
+  Aplica automáticamente un código de descuento (p. ej. BIENVENIDA15) en el carrito
   y lo anuncia con un popup de bienvenida.
   - No se aplica a clientes con sesión iniciada que ya tienen pedidos.
   - El código está limitado a un uso por cliente en Shopify, así que solo vale en la primera compra.
-  - Si el carrito tiene 2+ productos, Shopify aplica el descuento automático del 15% (sustituye al 10%).
+  - Si el carrito tiene 2+ productos, Shopify aplica el descuento automático del 20% (sustituye al 15%).
   - El popup sale una vez cada 24 h, nunca en el carrito, y se cierra con la X, el botón o tocando fuera.
 {%- endcomment -%}
 {%- liquid
@@ -18,9 +18,9 @@
   <div class="lf-pop__box">
     <button type="button" class="lf-pop__x" data-lf-close aria-label="Cerrar">×</button>
     <p class="lf-pop__eyebrow">¡Ups! Tienes un regalo</p>
-    <h2 class="lf-pop__title" id="lf-pop-title">10% de descuento<br>en tu primera compra</h2>
+    <h2 class="lf-pop__title" id="lf-pop-title">15% de descuento<br>en tu primera compra</h2>
     <p class="lf-pop__code">Código <strong>{{ code }}</strong> · ya activado</p>
-    <p class="lf-pop__txt">Se aplica solo en el carrito, no tienes que copiar nada.<br>Y si te llevas <strong>2 prendas, ahorras un 15%</strong>.</p>
+    <p class="lf-pop__txt">Se aplica solo en el carrito, no tienes que copiar nada.<br>Y si te llevas <strong>2 prendas, ahorras un 20%</strong>.</p>
     <button type="button" class="lf-pop__btn" data-lf-close>¡Lo quiero! Ver prendas</button>
     <p class="lf-pop__small">Envío gratis con seguimiento · 30 días para devoluciones</p>
   </div>
