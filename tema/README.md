@@ -1,6 +1,6 @@
-# Tema v5 – descuentos visibles
+# Tema v6 – descuentos visibles (15% bienvenida · 20% por 2 prendas)
 
-Archivos subidos al tema **"Lia Femme – v5 descuentos visibles (Claude)"** (sin publicar),
+Archivos subidos al tema **"Lia Femme – v6 descuentos 15/20 (Claude)"** (sin publicar),
 que es una copia del tema publicado "Lia Femme" a 7 oct 2026.
 
 | Archivo | Qué hace |
