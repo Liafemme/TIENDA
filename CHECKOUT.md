@@ -6,6 +6,10 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 - [x] Método de envío renombrado: "Gratis" → **"Envío GRATIS con seguimiento"** + "Entrega en 7-14 días laborables" (España y UE) / "7-30 días según destino" (internacional).
 - [x] Botones de pago exprés (Shop Pay / Apple Pay / Google Pay) activados en la ficha de producto (tema publicado).
 - [x] Textos nuevos de políticas listos en `politicas/` (originales guardados en `backup-politicas/`).
+- [x] **Prueba social en el carrito**: tema nuevo sin publicar **"Lia Femme – v8 prueba social carrito (Claude)"** (copia de v7). Bajo el botón de pago muestra, solo con datos reales:
+  - «Buena elección: X está entre lo más deseado de la temporada» si el producto está en la colección `lo-mas-deseado`.
+  - «Quedan pocas unidades de X» cuando el inventario real es ≤ 3.
+  - Valoración media y hasta 2 opiniones de clientas (vacías por defecto: rellenar solo con reseñas reales).
 
 ## Hazlo tú (Shopify no deja hacerlo por API en el plan Basic)
 
@@ -41,5 +45,11 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 - [ ] Opcional: incluir código de descuento en el 2º email (p. ej. 10 %).
 - [ ] Activar también **"Recuperar carrito abandonado"** y **"Bienvenida a nuevos suscriptores"**.
 
-### 6. Prueba final
+### 6. Prueba social del carrito
+- [ ] Temas → "v8 prueba social carrito" → Personalizar → página **Carrito** → bloque **Resumen** → sección "Prueba social": escribir 1-3 opiniones **reales** (Instagram, WhatsApp, emails) y, si las tienes, la valoración media.
+- [ ] Publicar el tema v8.
+- [ ] Ojo: la app **Upcart** sustituye el carrito lateral; ahí la prueba social se configura en la propia app (Upcart → "Trust badges / Social proof").
+- [ ] El checkout en sí no se puede personalizar en el plan Basic (solo en Shopify Plus).
+
+### 7. Prueba final
 - [ ] Hacer una compra real desde el **móvil** (con tarjeta propia, luego reembolsar) y anotar cualquier paso raro.
