@@ -9,6 +9,7 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 - [x] **Prueba social en el carrito**: tema nuevo sin publicar **"Lia Femme – v8 prueba social carrito (Claude)"** (copia de v7). Bajo el botón de pago muestra, solo con datos reales:
   - «Buena elección: X está entre lo más deseado de la temporada» si el producto está en la colección `lo-mas-deseado`.
   - «Quedan pocas unidades de X» cuando el inventario real es ≤ 3.
+  - Franja de garantías (envío gratis con seguimiento · 30 días para devolver · pago 100 % seguro) + iconos de los métodos de pago activos.
   - Valoración media y hasta 2 opiniones de clientas (vacías por defecto: rellenar solo con reseñas reales).
 
 ## Hazlo tú (Shopify no deja hacerlo por API en el plan Basic)
