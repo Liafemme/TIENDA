@@ -3,7 +3,7 @@
   Se muestra en productos con la etiqueta "selector-piedras" (desde blocks/variant-picker.liquid).
   Guarda la elección como propiedades del artículo "Piedra 1" y "Piedra 2" y bloquea
   "Añadir al carrito" / compra rápida hasta que se elijan las 2 piedras.
-  Para cambiar piedras o colores, edita la lista "stones" (nombre, color, subtítulo).
+  Para cambiar piedras, edita la lista "stones" (nombre, color, subtítulo, foto en Contenido > Archivos).
 {%- endcomment -%}
 {{ 'lf-piedras.css' | asset_url | stylesheet_tag }}
 <lf-piedras class="lf-pz" data-form-id="BuyButtons-ProductForm-{{ section.id }}" data-prop1="Piedra 1" data-prop2="Piedra 2">
@@ -25,18 +25,18 @@
       "confirm": "Confirmar",
       "err": "Selecciona una piedra",
       "stones": [
-        {"name": "Enero", "color": "#8e1b2e", "sub": "Granate"},
-        {"name": "Febrero", "color": "#8f5fc4", "sub": "Amatista"},
-        {"name": "Marzo", "color": "#86d3e3", "sub": "Aguamarina"},
-        {"name": "Abril", "color": "#eef3f6", "sub": "Diamante"},
-        {"name": "Mayo", "color": "#1d9a5b", "sub": "Esmeralda"},
-        {"name": "Junio", "color": "#d9c8e6", "sub": "Alejandrita"},
-        {"name": "Julio", "color": "#cf1340", "sub": "Rubí"},
-        {"name": "Agosto", "color": "#a5c43a", "sub": "Peridoto"},
-        {"name": "Septiembre", "color": "#1f4fbf", "sub": "Zafiro"},
-        {"name": "Octubre", "color": "#f08ab6", "sub": "Turmalina"},
-        {"name": "Noviembre", "color": "#f0a11d", "sub": "Topacio"},
-        {"name": "Diciembre", "color": "#3aa6d8", "sub": "Circón"}
+        {"name": "Enero", "color": "#8e1b2e", "sub": "Granate", "img": {{ 'lf-piedra-enero.webp' | file_url | json }}},
+        {"name": "Febrero", "color": "#8f5fc4", "sub": "Amatista", "img": {{ 'lf-piedra-febrero.webp' | file_url | json }}},
+        {"name": "Marzo", "color": "#86d3e3", "sub": "Aguamarina", "img": {{ 'lf-piedra-marzo.webp' | file_url | json }}},
+        {"name": "Abril", "color": "#eef3f6", "sub": "Diamante", "img": {{ 'lf-piedra-abril.webp' | file_url | json }}},
+        {"name": "Mayo", "color": "#1d9a5b", "sub": "Esmeralda", "img": {{ 'lf-piedra-mayo.webp' | file_url | json }}},
+        {"name": "Junio", "color": "#d9c8e6", "sub": "Alejandrita", "img": {{ 'lf-piedra-junio.webp' | file_url | json }}},
+        {"name": "Julio", "color": "#cf1340", "sub": "Rubí", "img": {{ 'lf-piedra-julio.webp' | file_url | json }}},
+        {"name": "Agosto", "color": "#a5c43a", "sub": "Peridoto", "img": {{ 'lf-piedra-agosto.webp' | file_url | json }}},
+        {"name": "Septiembre", "color": "#1f4fbf", "sub": "Zafiro", "img": {{ 'lf-piedra-septiembre.webp' | file_url | json }}},
+        {"name": "Octubre", "color": "#f08ab6", "sub": "Turmalina", "img": {{ 'lf-piedra-octubre.webp' | file_url | json }}},
+        {"name": "Noviembre", "color": "#f0a11d", "sub": "Topacio", "img": {{ 'lf-piedra-noviembre.webp' | file_url | json }}},
+        {"name": "Diciembre", "color": "#3aa6d8", "sub": "Circón", "img": {{ 'lf-piedra-diciembre.webp' | file_url | json }}}
       ]
     }
   </script>

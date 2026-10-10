@@ -13,6 +13,11 @@
       '<path d="'+DROP+'" fill="url(#'+g+')" stroke="rgba(0,0,0,.18)" stroke-width="1"/>'+
       '<path d="M14 30c1-5 3-8 5-11" stroke="#fff" stroke-opacity=".7" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
   }
+  // Foto de la piedra si existe; si no, el dibujo de color
+  function gemHTML(st, id){
+    if (st.img) return '<img src="'+esc(st.img)+'" alt="" loading="lazy" width="48" height="60">';
+    return gemSVG(st.color, id);
+  }
   function isSilver(){
     var txt = '';
     document.querySelectorAll('variant-picker[data-template-product-match] input:checked, variant-picker[data-template-product-match] select').forEach(function(el){
@@ -21,18 +26,25 @@
     return /plata|silver|argent/i.test(txt);
   }
   // Dos lágrimas que forman un corazón, con el engaste en oro o plata
-  function heartSVG(c1, c2){
+  function heartSVG(s1, s2){
     var metal = isSilver() ? '#c9ccd1' : '#d4a94f';
-    function drop(cx, ang, gid){
-      return '<g transform="translate('+(cx-20)+' 15) rotate('+ang+' 20 33)"><path d="'+DROP+'" fill="url(#'+gid+')" stroke="'+metal+'" stroke-width="3" stroke-linejoin="round"/></g>';
+    function drop(st, cx, ang, gid){
+      var g = '<g transform="translate('+(cx-20)+' 15) rotate('+ang+' 20 33)">';
+      if (st && st.img) {
+        var img = '<image href="'+esc(st.img)+'" x="0" y="0" width="40" height="50" preserveAspectRatio="xMidYMid meet"/>';
+        return g+'<g filter="url(#lfpzbezel)">'+img+'</g>'+img+'</g>';
+      }
+      return g+'<path d="'+DROP+'" fill="url(#'+gid+')" stroke="'+metal+'" stroke-width="3" stroke-linejoin="round"/></g>';
     }
     function grad(id, color){
       return '<radialGradient id="'+id+'" cx="40%" cy="60%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".4" stop-color="'+esc(color)+'"/><stop offset="1" stop-color="'+esc(color)+'"/></radialGradient>';
     }
     return '<svg viewBox="0 0 160 92" role="img" aria-label="Vista previa del colgante">'+
-      '<defs>'+grad('lfpzh1', c1 || '#e9e3dc')+grad('lfpzh2', c2 || '#e9e3dc')+'</defs>'+
+      '<defs>'+grad('lfpzh1', (s1 && s1.color) || '#e9e3dc')+grad('lfpzh2', (s2 && s2.color) || '#e9e3dc')+
+      '<filter id="lfpzbezel" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="1.6" result="d"/>'+
+      '<feFlood flood-color="'+metal+'"/><feComposite in2="d" operator="in"/></filter></defs>'+
       '<path d="M0 6 Q80 40 160 6" stroke="'+metal+'" stroke-width="1.5" fill="none"/>'+
-      drop(64, 145, 'lfpzh1')+drop(96, -145, 'lfpzh2')+
+      drop(s1, 64, 145, 'lfpzh1')+drop(s2, 96, -145, 'lfpzh2')+
       '<circle cx="80" cy="27" r="3" fill="none" stroke="'+metal+'" stroke-width="2"/></svg>';
   }
 
@@ -53,7 +65,7 @@
         '<p class="lf-pz-drawer__err" data-err="'+n+'" hidden>'+esc(cfg.err)+'</p><div class="lf-pz-drawer__grid">'+
         cfg.stones.map(function(st, i){
           return '<button type="button" class="lf-pz-tile" data-slot="'+n+'" data-stone="'+esc(st.name)+'" aria-pressed="false">'+
-            gemSVG(st.color, n + '_' + i)+'<span class="lf-pz-tile__name">'+esc(st.name)+'</span>'+
+            gemHTML(st, n + '_' + i)+'<span class="lf-pz-tile__name">'+esc(st.name)+'</span>'+
             (st.sub ? '<span class="lf-pz-tile__sub">'+esc(st.sub)+'</span>' : '')+'</button>';
         }).join('')+'</div></div>';
     }).join('');
@@ -83,7 +95,7 @@
     });
     [1, 2].forEach(function(n){ if (draft[n]) drawer.querySelector('[data-err="'+n+'"]').hidden = true; });
     var s1 = stoneBy(cfg, draft[1]), s2 = stoneBy(cfg, draft[2]);
-    drawer.querySelector('[data-preview]').innerHTML = heartSVG(s1 && s1.color, s2 && s2.color);
+    drawer.querySelector('[data-preview]').innerHTML = heartSVG(s1, s2);
   }
 
   function open(el){
@@ -136,7 +148,7 @@
       var cfg = this.cfg, self = this;
       this.querySelector('[data-pz-count]').textContent = count(state) + '/2';
       this.querySelector('[data-pz-chips]').innerHTML = [1, 2].map(function(n){
-        var st = stoneBy(cfg, state[n]); return st ? gemSVG(st.color, 'c' + n) : '';
+        var st = stoneBy(cfg, state[n]); return st ? gemHTML(st, 'c' + n) : '';
       }).join('');
       if (this.complete()) { this.classList.remove('is-error'); this.querySelector('[data-pz-need]').hidden = true; }
       // Propiedades del artículo, asociadas al formulario de compra mediante el atributo form=
