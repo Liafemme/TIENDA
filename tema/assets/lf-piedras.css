@@ -17,8 +17,11 @@
 .lf-pz-drawer__head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 16px 0 22px;border-bottom:1px solid #eee;font-size:15px}
 .lf-pz-drawer__title{font-weight:500}
 .lf-pz-drawer__close{all:unset;cursor:pointer;padding:8px;display:flex}
-.lf-pz-drawer__preview{flex:0 0 auto;height:min(30vh,240px);background:#fbf8f4;display:flex;align-items:center;justify-content:center}
+.lf-pz-drawer__preview{flex:0 0 auto;height:min(34vh,280px);background:#fbf8f4;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .lf-pz-drawer__preview svg{height:86%;width:auto}
+.lf-pz-drawer__preview svg.is-photo{width:100%;height:100%}
+.lf-pz-ov{position:absolute;z-index:2;pointer-events:none}
+.lf-pz-ov svg{display:block}
 .lf-pz-drawer__body{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 24px}
 .lf-pz-drawer__section{padding-top:20px}
 .lf-pz-drawer__h{font-family:var(--font-heading--family,serif);font-weight:400;font-size:22px;margin:0 0 12px 2px}

@@ -48,6 +48,60 @@
       '<circle cx="80" cy="27" r="3" fill="none" stroke="'+metal+'" stroke-width="2"/></svg>';
   }
 
+  // Escena con la foto real del collar: foto base + piedras elegidas + garras recortadas encima
+  var METAL = {oro: '#d4a94f', plata: '#cdd0d4'};
+  function metalKey(){ return isSilver() ? 'plata' : 'oro'; }
+  function stoneLayers(sc, key, s1, s2){
+    var out = '', any = false;
+    [s1, s2].forEach(function(st, i){
+      var sl = sc.slots[i];
+      if (!st || !st.img || !sl) return;
+      any = true;
+      var img = '<image href="'+esc(st.img)+'" width="240" height="300"/>';
+      out += '<g transform="translate('+sl[0]+' '+sl[1]+') rotate('+sl[2]+') scale('+sl[3]+') translate(-120 -149.5)">'+
+        '<g filter="url(#lfpzbz-'+key+')">'+img+'</g>'+img+'</g>';
+    });
+    if (!any) return '';
+    var top = '<image href="'+esc(sc.top)+'" width="'+sc.w+'" height="'+sc.h+'"/>', r = sc.refl, refl = '';
+    if (r) {
+      // Reflejo: tapa el reflejo original de la foto y pinta el de las piedras nuevas, difuminado
+      refl = '<rect x="'+r.x0+'" y="'+(r.y+4)+'" width="'+(r.x1-r.x0)+'" height="300" fill="'+r.bg+'"/>'+
+        '<g mask="url(#lfpzrm-'+key+')"><g transform="translate(0 '+(2*r.y)+') scale(1 -1)">'+out+top+'</g></g>';
+    }
+    return '<defs><filter id="lfpzbz-'+key+'" x="-10%" y="-10%" width="120%" height="120%">'+
+      '<feMorphology in="SourceAlpha" operator="dilate" radius="2.6" result="d"/><feFlood flood-color="'+METAL[key]+'"/>'+
+      '<feComposite in2="d" operator="in"/></filter>'+
+      (r ? '<linearGradient id="lfpzrg-'+key+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+        '<mask id="lfpzrm-'+key+'" maskUnits="userSpaceOnUse" x="0" y="'+r.y+'" width="'+sc.w+'" height="300"><rect x="0" y="'+(r.y+4)+'" width="'+sc.w+'" height="300" fill="url(#lfpzrg-'+key+')"/></mask>' : '')+
+      '</defs>'+refl+out+top;
+  }
+  function photoSVG(cfg, s1, s2){
+    var key = metalKey(), sc = cfg.scene[key];
+    return '<svg class="is-photo" viewBox="0 0 '+sc.w+' '+sc.h+'" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Vista previa del collar">'+
+      '<image href="'+esc(sc.base)+'" width="'+sc.w+'" height="'+sc.h+'"/>'+stoneLayers(sc, key, s1, s2)+'</svg>';
+  }
+  // Las piedras confirmadas también se ven sobre las fotos del producto (oro y plata)
+  function updateGallery(cfg){
+    if (!cfg.scene) return;
+    var s1 = stoneBy(cfg, state[1]), s2 = stoneBy(cfg, state[2]);
+    Object.keys(cfg.scene).forEach(function(key){
+      var sc = cfg.scene[key];
+      document.querySelectorAll('img[src*="'+sc.photo+'"], img[srcset*="'+sc.photo+'"]').forEach(function(img){
+        if (img.closest('.lf-pz-drawer') || img.clientWidth < 200) return;
+        var host = img.parentElement, ov = host.querySelector(':scope > .lf-pz-ov');
+        var layers = stoneLayers(sc, key, s1, s2);
+        if (!layers) { if (ov) ov.remove(); return; }
+        if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+        if (!ov) { ov = document.createElement('div'); ov.className = 'lf-pz-ov'; host.appendChild(ov); }
+        ov.style.cssText = 'left:'+img.offsetLeft+'px;top:'+img.offsetTop+'px;width:'+img.offsetWidth+'px;height:'+img.offsetHeight+'px';
+        var fit = getComputedStyle(img).objectFit === 'cover' ? 'slice' : 'meet';
+        ov.innerHTML = '<svg viewBox="0 0 '+sc.full[0]+' '+sc.full[1]+'" preserveAspectRatio="xMidYMid '+fit+'" width="100%" height="100%">'+
+          '<g transform="translate('+sc.ox+' '+sc.oy+') scale('+sc.k+')">'+layers+'</g></svg>';
+      });
+    });
+  }
+  window.addEventListener('resize', function(){ document.querySelectorAll('lf-piedras').forEach(function(el){ updateGallery(el.cfg); }); });
+
   var drawer, overlay, active, draft = {1: null, 2: null};
 
   function cfgOf(el){ try { return JSON.parse(el.querySelector('[data-pz-config]').textContent); } catch(e){ return {stones: []}; } }
@@ -95,7 +149,7 @@
     });
     [1, 2].forEach(function(n){ if (draft[n]) drawer.querySelector('[data-err="'+n+'"]').hidden = true; });
     var s1 = stoneBy(cfg, draft[1]), s2 = stoneBy(cfg, draft[2]);
-    drawer.querySelector('[data-preview]').innerHTML = heartSVG(s1, s2);
+    drawer.querySelector('[data-preview]').innerHTML = cfg.scene ? photoSVG(cfg, s1, s2) : heartSVG(s1, s2);
   }
 
   function open(el){
@@ -164,6 +218,7 @@
         input.value = st ? label(st) : '';
         input.disabled = !st;
       });
+      updateGallery(cfg);
     }
   }
   customElements.define('lf-piedras', LfPiedras);

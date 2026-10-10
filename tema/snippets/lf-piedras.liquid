@@ -3,6 +3,7 @@
   Se muestra en productos con la etiqueta "selector-piedras" (desde blocks/variant-picker.liquid).
   Guarda la elección como propiedades del artículo "Piedra 1" y "Piedra 2" y bloquea
   "Añadir al carrito" / compra rápida hasta que se elijan las 2 piedras.
+  "scene" (solo Liora): foto real del collar con las piedras elegidas encima; coordenadas medidas sobre sus fotos.
   Para cambiar piedras, edita la lista "stones" (nombre, color, subtítulo, foto en Contenido > Archivos).
 {%- endcomment -%}
 {{ 'lf-piedras.css' | asset_url | stylesheet_tag }}
@@ -24,6 +25,18 @@
       "stone2": "Piedra 2",
       "confirm": "Confirmar",
       "err": "Selecciona una piedra",
+      {%- if product.handle == 'liora-collar' %}
+      "scene": {
+        "oro": {"base": {{ 'lf-liora-base-oro.webp' | file_url | json }}, "top": {{ 'lf-liora-top-oro.webp' | file_url | json }}, "w": 800, "h": 550,
+          "slots": [[321.5, 352.5, 144.6, 0.78], [460, 353.5, -143.6, 0.78]],
+          "refl": {"y": 460, "bg": "#f9f6f1", "x0": 240, "x1": 570},
+          "photo": "ChatGPT_Image_11_aug_2026_15_47_22", "full": [1792, 2400], "ox": 500, "oy": 1500, "k": 1},
+        "plata": {"base": {{ 'lf-liora-base-plata.webp' | file_url | json }}, "top": {{ 'lf-liora-top-plata.webp' | file_url | json }}, "w": 800, "h": 550,
+          "slots": [[317, 368, 147, 0.77], [451, 370, -144.4, 0.78]],
+          "refl": {"y": 478, "bg": "#f6f7f6", "x0": 240, "x1": 570},
+          "photo": "ChatGPT_Image_11_aug_2026_15_52_10", "full": [1254, 1254], "ox": 440, "oy": 780, "k": 0.5}
+      },
+      {%- endif %}
       "stones": [
         {"name": "Enero", "color": "#8e1b2e", "sub": "Granate", "img": {{ 'lf-piedra-enero.webp' | file_url | json }}},
         {"name": "Febrero", "color": "#8f5fc4", "sub": "Amatista", "img": {{ 'lf-piedra-febrero.webp' | file_url | json }}},
