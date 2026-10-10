@@ -1,0 +1,44 @@
+{%- comment -%}
+  LF · Selector de piedras (2 piedras obligatorias).
+  Se muestra en productos con la etiqueta "selector-piedras" (desde blocks/variant-picker.liquid).
+  Guarda la elección como propiedades del artículo "Piedra 1" y "Piedra 2" y bloquea
+  "Añadir al carrito" / compra rápida hasta que se elijan las 2 piedras.
+  Para cambiar piedras o colores, edita la lista "stones" (nombre, color, subtítulo).
+{%- endcomment -%}
+{{ 'lf-piedras.css' | asset_url | stylesheet_tag }}
+<lf-piedras class="lf-pz" data-form-id="BuyButtons-ProductForm-{{ section.id }}" data-prop1="Piedra 1" data-prop2="Piedra 2">
+  <button type="button" class="lf-pz__trigger" data-pz-open>
+    <span class="lf-pz__left">
+      <span class="lf-pz__plus" aria-hidden="true">+</span>
+      <span>Elige tus piedras</span>
+      <span class="lf-pz__muted">(Gratis)</span>
+    </span>
+    <span class="lf-pz__chips" data-pz-chips></span>
+    <span class="lf-pz__count" data-pz-count>0/2</span>
+  </button>
+  <p class="lf-pz__need" data-pz-need hidden>Elige 2 piedras para añadir al carrito</p>
+  <script type="application/json" data-pz-config>
+    {
+      "title": "Elige una piedra",
+      "stone1": "Piedra 1",
+      "stone2": "Piedra 2",
+      "confirm": "Confirmar",
+      "err": "Selecciona una piedra",
+      "stones": [
+        {"name": "Enero", "color": "#8e1b2e", "sub": "Granate"},
+        {"name": "Febrero", "color": "#8f5fc4", "sub": "Amatista"},
+        {"name": "Marzo", "color": "#86d3e3", "sub": "Aguamarina"},
+        {"name": "Abril", "color": "#eef3f6", "sub": "Diamante"},
+        {"name": "Mayo", "color": "#1d9a5b", "sub": "Esmeralda"},
+        {"name": "Junio", "color": "#d9c8e6", "sub": "Alejandrita"},
+        {"name": "Julio", "color": "#cf1340", "sub": "Rubí"},
+        {"name": "Agosto", "color": "#a5c43a", "sub": "Peridoto"},
+        {"name": "Septiembre", "color": "#1f4fbf", "sub": "Zafiro"},
+        {"name": "Octubre", "color": "#f08ab6", "sub": "Turmalina"},
+        {"name": "Noviembre", "color": "#f0a11d", "sub": "Topacio"},
+        {"name": "Diciembre", "color": "#3aa6d8", "sub": "Circón"}
+      ]
+    }
+  </script>
+</lf-piedras>
+<script src="{{ 'lf-piedras.js' | asset_url }}" defer></script>
