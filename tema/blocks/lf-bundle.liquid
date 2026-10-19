@@ -1,0 +1,182 @@
+{%- comment -%}
+  Bundle por cantidad (1 / 2 / 3 unidades) encima del botón "Añadir al carrito".
+  Al elegir una opción cambia la cantidad del formulario del producto.
+  El descuento NO lo aplica este bloque: lo aplican los descuentos automáticos de Shopify
+  (Descuentos → "Compra 2 y ahorra 20%" y "Pulsera mariposa: 3 por -30%").
+  Los porcentajes de aquí deben coincidir con esos descuentos.
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  assign p = closest.product
+  assign v = p.selected_or_first_available_variant
+  assign form_id = 'BuyButtons-ProductForm-' | append: section.id
+-%}
+{%- if v -%}
+<div
+  class="lf-bundle"
+  id="lf-bundle-{{ block.id }}"
+  data-form="{{ form_id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if bs.heading != blank -%}
+    <p class="lf-bundle__head"><span>{{ bs.heading }}</span></p>
+  {%- endif -%}
+  {%- for i in (1..3) -%}
+    {%- liquid
+      assign k_title = 'title_' | append: i
+      assign k_sub = 'sub_' | append: i
+      assign k_qty = 'qty_' | append: i
+      assign k_pct = 'pct_' | append: i
+      assign k_badge = 'badge_' | append: i
+      assign k_perk = 'perk_' | append: i
+      assign qty = bs[k_qty]
+      assign pct = bs[k_pct]
+      assign full = v.price | times: qty
+      assign factor = 100 | minus: pct | divided_by: 100.0
+      assign final = full | times: factor | round
+      assign saved = full | minus: final
+      assign saved_money = saved | money
+      assign saved_html = '<b class="lf-bundle__saved">' | append: saved_money | append: '</b>'
+    -%}
+    {%- if bs[k_title] != blank -%}
+      <label class="lf-bundle__opt{% if bs[k_badge] != blank %} lf-bundle__opt--badge{% endif %}" data-qty="{{ qty }}" data-pct="{{ pct }}">
+        <input type="radio" name="lf-bundle-{{ block.id }}" value="{{ qty }}" {% if i == bs.default_tier %}checked{% endif %}>
+        {%- if bs[k_badge] != blank -%}<span class="lf-bundle__badge">{{ bs[k_badge] }}</span>{%- endif -%}
+        <span class="lf-bundle__radio" aria-hidden="true"></span>
+        <span class="lf-bundle__info">
+          <span class="lf-bundle__title">
+            {{ bs[k_title] }}
+            {%- if pct > 0 -%}<span class="lf-bundle__pct">-{{ pct }}%</span>{%- endif -%}
+          </span>
+          <span class="lf-bundle__sub">
+            {%- if pct > 0 -%}
+              {{ bs[k_sub] | replace: '[ahorro]', saved_html }}
+            {%- else -%}
+              {{ bs[k_sub] }}
+            {%- endif -%}
+          </span>
+          {%- if bs[k_perk] != blank -%}<span class="lf-bundle__perk">✓ {{ bs[k_perk] }}</span>{%- endif -%}
+        </span>
+        <span class="lf-bundle__prices">
+          <span class="lf-bundle__price">{{ final | money }}</span>
+          {%- if pct > 0 -%}<s class="lf-bundle__full">{{ full | money }}</s>{%- endif -%}
+        </span>
+      </label>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+<style>
+  #{{ form_id }} .quantity-selector-wrapper{display:none}
+</style>
+<script>
+  (function () {
+    var box = document.getElementById('lf-bundle-{{ block.id }}');
+    if (!box || !box.classList.contains('lf-bundle') || box.dataset.ready) return;
+    box.dataset.ready = '1';
+    var fmt = {{ shop.money_format | json }};
+    function money(cents) {
+      var n = (cents / 100).toFixed(2);
+      var parts = n.split('.');
+      var intp = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      var withComma = intp + ',' + parts[1];
+      var withDot = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
+      return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, k) {
+        if (k === 'amount_with_comma_separator') return withComma;
+        if (k === 'amount_no_decimals') return parts[0];
+        if (k === 'amount_no_decimals_with_comma_separator') return intp;
+        return withDot;
+      });
+    }
+    function selected() {
+      var r = box.querySelector('input:checked');
+      return r ? parseInt(r.value, 10) : 1;
+    }
+    // Horizon vuelve a pintar los botones de compra al cambiar de variante, por eso se busca el input cada vez
+    function sync() {
+      var form = document.getElementById(box.dataset.form);
+      var input = form && form.querySelector('input[name="quantity"]');
+      if (!input) return;
+      input.value = selected();
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    box.addEventListener('change', sync);
+    document.addEventListener('variant:update', function (e) {
+      var variant = e.detail && e.detail.resource;
+      if (variant && typeof variant.price === 'number') {
+        box.querySelectorAll('.lf-bundle__opt').forEach(function (opt) {
+          var qty = parseInt(opt.dataset.qty, 10);
+          var pct = parseInt(opt.dataset.pct, 10);
+          var full = variant.price * qty;
+          var final = Math.round(full * (100 - pct) / 100);
+          var price = opt.querySelector('.lf-bundle__price');
+          var fullEl = opt.querySelector('.lf-bundle__full');
+          var saved = opt.querySelector('.lf-bundle__saved');
+          if (price) price.textContent = money(final);
+          if (fullEl) fullEl.textContent = money(full);
+          if (saved) saved.textContent = money(full - final);
+        });
+      }
+      setTimeout(sync, 50);
+    });
+    // El formulario va después de este bloque: se sincroniza al cargar y justo antes de enviar
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.id === box.dataset.form) sync();
+    }, true);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sync);
+    else sync();
+  })();
+</script>
+{%- endif -%}
+<style>
+  .lf-bundle{display:grid;gap:10px;margin:8px 0 4px}
+  .lf-bundle__head{display:flex;align-items:center;gap:10px;margin:0 0 2px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1e1a17}
+  .lf-bundle__head::before,.lf-bundle__head::after{content:"";flex:1;height:1px;background:#d9cbbd}
+  .lf-bundle__opt{position:relative;display:flex;align-items:center;gap:12px;padding:14px 14px;border:1.5px solid #e4d9ce;border-radius:10px;background:#f6f1eb;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+  .lf-bundle__opt--badge{margin-top:8px}
+  .lf-bundle__opt input{position:absolute;opacity:0;pointer-events:none}
+  .lf-bundle__opt:has(input:checked){border-color:#9c5b3e;background:#fff;box-shadow:0 2px 10px rgba(156,91,62,.12)}
+  .lf-bundle__opt:has(input:focus-visible){outline:2px solid #9c5b3e;outline-offset:2px}
+  .lf-bundle__radio{flex:0 0 18px;width:18px;height:18px;border:1.5px solid #9c8b7d;border-radius:50%;background:#fff}
+  .lf-bundle__opt:has(input:checked) .lf-bundle__radio{border-color:#9c5b3e;box-shadow:inset 0 0 0 4px #fff;background:#9c5b3e}
+  .lf-bundle__info{flex:1;display:grid;gap:2px;min-width:0}
+  .lf-bundle__title{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:16px;font-weight:600;color:#1e1a17;line-height:1.25}
+  .lf-bundle__pct{font-size:11px;font-weight:700;letter-spacing:.04em;color:#fff;background:#1e1a17;border-radius:4px;padding:3px 6px}
+  .lf-bundle__sub{font-size:13px;color:#5a514a}
+  .lf-bundle__sub b{color:#a23b2c;font-weight:700}
+  .lf-bundle__perk{font-size:12px;font-weight:600;color:#2f6b3a}
+  .lf-bundle__prices{display:grid;justify-items:end;gap:2px;text-align:right}
+  .lf-bundle__price{font-size:17px;font-weight:700;color:#1e1a17;white-space:nowrap}
+  .lf-bundle__full{font-size:13px;color:#8a8079;white-space:nowrap}
+  .lf-bundle__badge{position:absolute;top:-10px;right:14px;background:#9c5b3e;color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+</style>
+{% schema %}
+{
+  "name": "LF · Bundle por cantidad",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Compra más y ahorra" },
+    { "type": "range", "id": "default_tier", "label": "Opción preseleccionada", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "header", "content": "Opción 1" },
+    { "type": "text", "id": "title_1", "label": "Título", "default": "1 pulsera" },
+    { "type": "text", "id": "sub_1", "label": "Subtítulo", "default": "Precio normal" },
+    { "type": "number", "id": "qty_1", "label": "Unidades", "default": 1 },
+    { "type": "number", "id": "pct_1", "label": "% de descuento", "default": 0 },
+    { "type": "text", "id": "badge_1", "label": "Etiqueta" },
+    { "type": "text", "id": "perk_1", "label": "Ventaja extra" },
+    { "type": "header", "content": "Opción 2" },
+    { "type": "text", "id": "title_2", "label": "Título", "default": "2 pulseras" },
+    { "type": "text", "id": "sub_2", "label": "Subtítulo", "info": "[ahorro] se cambia por el dinero ahorrado", "default": "Ahorras [ahorro]" },
+    { "type": "number", "id": "qty_2", "label": "Unidades", "default": 2 },
+    { "type": "number", "id": "pct_2", "label": "% de descuento", "default": 20 },
+    { "type": "text", "id": "badge_2", "label": "Etiqueta", "default": "Más vendido" },
+    { "type": "text", "id": "perk_2", "label": "Ventaja extra", "default": "Una para ti y otra para regalar" },
+    { "type": "header", "content": "Opción 3" },
+    { "type": "text", "id": "title_3", "label": "Título", "default": "3 pulseras" },
+    { "type": "text", "id": "sub_3", "label": "Subtítulo", "info": "[ahorro] se cambia por el dinero ahorrado", "default": "Ahorras [ahorro]" },
+    { "type": "number", "id": "qty_3", "label": "Unidades", "default": 3 },
+    { "type": "number", "id": "pct_3", "label": "% de descuento", "default": 30 },
+    { "type": "text", "id": "badge_3", "label": "Etiqueta", "default": "Mejor precio" },
+    { "type": "text", "id": "perk_3", "label": "Ventaja extra", "default": "El mejor precio por pulsera" }
+  ],
+  "presets": [{ "name": "LF · Bundle por cantidad", "category": "Product" }]
+}
+{% endschema %}
