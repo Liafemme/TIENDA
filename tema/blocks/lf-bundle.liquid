@@ -1,21 +1,22 @@
 {%- comment -%}
-  Bundle por cantidad (1 / 2 / 3 unidades) encima del botón "Añadir al carrito".
-  Al elegir una opción cambia la cantidad del formulario del producto.
+  Bundle de variantes del mismo producto (p. ej. Pulsera / Pulsera + Collar / Pulsera + Collar + Anillo),
+  encima del botón "Añadir al carrito". Al añadir, mete en el carrito una línea por cada variante del pack.
   El descuento NO lo aplica este bloque: lo aplican los descuentos automáticos de Shopify
-  (Descuentos → "Compra 2 y ahorra 20%" y "Pulsera mariposa: 3 por -30%").
+  (Descuentos → "Compra 2 y ahorra 20%" y "Set Sueño Luminoso -30%", mínimo 3 piezas de este producto).
   Los porcentajes de aquí deben coincidir con esos descuentos.
 {%- endcomment -%}
 {%- liquid
   assign bs = block.settings
   assign p = closest.product
-  assign v = p.selected_or_first_available_variant
   assign form_id = 'BuyButtons-ProductForm-' | append: section.id
+  assign default_tier = bs.default_tier
 -%}
-{%- if v -%}
+{%- unless p.has_only_default_variant -%}
 <div
   class="lf-bundle"
   id="lf-bundle-{{ block.id }}"
   data-form="{{ form_id }}"
+  data-section="{{ section.id }}"
   {{ block.shopify_attributes }}
 >
   {%- if bs.heading != blank -%}
@@ -25,36 +26,60 @@
     {%- liquid
       assign k_title = 'title_' | append: i
       assign k_sub = 'sub_' | append: i
-      assign k_qty = 'qty_' | append: i
+      assign k_items = 'items_' | append: i
       assign k_pct = 'pct_' | append: i
       assign k_badge = 'badge_' | append: i
       assign k_perk = 'perk_' | append: i
-      assign qty = bs[k_qty]
       assign pct = bs[k_pct]
-      assign full = v.price | times: qty
+      assign names = bs[k_items] | split: ','
+      assign ids = ''
+      assign full = 0
+      assign found = 0
+      for name in names
+        assign wanted = name | strip | downcase
+        for v in p.variants
+          assign vt = v.title | downcase
+          if vt == wanted
+            assign full = full | plus: v.price
+            assign found = found | plus: 1
+            assign ids = ids | append: v.id | append: ','
+            if v.available == false
+              assign found = -99
+            endif
+          endif
+        endfor
+      endfor
       assign factor = 100 | minus: pct | divided_by: 100.0
       assign final = full | times: factor | round
       assign saved = full | minus: final
       assign saved_money = saved | money
       assign saved_html = '<b class="lf-bundle__saved">' | append: saved_money | append: '</b>'
     -%}
-    {%- if bs[k_title] != blank -%}
-      <label class="lf-bundle__opt{% if bs[k_badge] != blank %} lf-bundle__opt--badge{% endif %}" data-qty="{{ qty }}" data-pct="{{ pct }}">
-        <input type="radio" name="lf-bundle-{{ block.id }}" value="{{ qty }}" {% if i == bs.default_tier %}checked{% endif %}>
+    {%- if bs[k_title] != blank and found > 0 and found == names.size -%}
+      <label class="lf-bundle__opt{% if bs[k_badge] != blank %} lf-bundle__opt--badge{% endif %}">
+        <input type="radio" name="lf-bundle-{{ block.id }}" value="{{ ids | remove_last: ',' }}" {% if i == default_tier %}checked{% endif %}>
         {%- if bs[k_badge] != blank -%}<span class="lf-bundle__badge">{{ bs[k_badge] }}</span>{%- endif -%}
         <span class="lf-bundle__radio" aria-hidden="true"></span>
+        <span class="lf-bundle__thumbs" aria-hidden="true">
+          {%- for name in names -%}
+            {%- assign wanted = name | strip | downcase -%}
+            {%- for v in p.variants -%}
+              {%- assign vt = v.title | downcase -%}
+              {%- if vt == wanted -%}
+                {%- assign img = v.featured_image | default: p.featured_image -%}
+                {%- if img -%}{{ img | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', width: 40, height: 40 }}{%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        </span>
         <span class="lf-bundle__info">
           <span class="lf-bundle__title">
             {{ bs[k_title] }}
             {%- if pct > 0 -%}<span class="lf-bundle__pct">-{{ pct }}%</span>{%- endif -%}
           </span>
-          <span class="lf-bundle__sub">
-            {%- if pct > 0 -%}
-              {{ bs[k_sub] | replace: '[ahorro]', saved_html }}
-            {%- else -%}
-              {{ bs[k_sub] }}
-            {%- endif -%}
-          </span>
+          {%- if bs[k_sub] != blank -%}
+            <span class="lf-bundle__sub">{{ bs[k_sub] | replace: '[ahorro]', saved_html }}</span>
+          {%- endif -%}
           {%- if bs[k_perk] != blank -%}<span class="lf-bundle__perk">✓ {{ bs[k_perk] }}</span>{%- endif -%}
         </span>
         <span class="lf-bundle__prices">
@@ -66,67 +91,86 @@
   {%- endfor -%}
 </div>
 <style>
+  {%- comment -%} El pack sustituye al selector de variantes y a la cantidad {%- endcomment -%}
+  #shopify-section-{{ section.id }} variant-picker,
   #{{ form_id }} .quantity-selector-wrapper{display:none}
+  #{{ form_id }}.lf-bundle-multi .shopify-payment-button,
+  #{{ form_id }}.lf-bundle-multi shopify-accelerated-checkout{display:none}
 </style>
 <script>
   (function () {
     var box = document.getElementById('lf-bundle-{{ block.id }}');
-    if (!box || !box.classList.contains('lf-bundle') || box.dataset.ready) return;
+    if (!box || box.dataset.ready) return;
     box.dataset.ready = '1';
-    var fmt = {{ shop.money_format | json }};
-    function money(cents) {
-      var n = (cents / 100).toFixed(2);
-      var parts = n.split('.');
-      var intp = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      var withComma = intp + ',' + parts[1];
-      var withDot = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
-      return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, k) {
-        if (k === 'amount_with_comma_separator') return withComma;
-        if (k === 'amount_no_decimals') return parts[0];
-        if (k === 'amount_no_decimals_with_comma_separator') return intp;
-        return withDot;
-      });
+
+    function ids() {
+      var r = box.querySelector('input:checked') || box.querySelector('input');
+      return r ? r.value.split(',') : [];
     }
-    function selected() {
-      var r = box.querySelector('input:checked');
-      return r ? parseInt(r.value, 10) : 1;
-    }
-    // Horizon vuelve a pintar los botones de compra al cambiar de variante, por eso se busca el input cada vez
+    function form() { return document.getElementById(box.dataset.form); }
+
+    // Deja el formulario apuntando a la primera pieza del pack y oculta el pago exprés en los packs
     function sync() {
-      var form = document.getElementById(box.dataset.form);
-      var input = form && form.querySelector('input[name="quantity"]');
-      if (!input) return;
-      input.value = selected();
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      var f = form();
+      if (!f) return;
+      var list = ids();
+      var idInput = f.querySelector('input[name="id"]');
+      if (idInput && list[0]) idInput.value = list[0];
+      var qty = f.querySelector('input[name="quantity"]');
+      if (qty) qty.value = 1;
+      f.classList.toggle('lf-bundle-multi', list.length > 1);
     }
-    box.addEventListener('change', sync);
-    document.addEventListener('variant:update', function (e) {
-      var variant = e.detail && e.detail.resource;
-      if (variant && typeof variant.price === 'number') {
-        box.querySelectorAll('.lf-bundle__opt').forEach(function (opt) {
-          var qty = parseInt(opt.dataset.qty, 10);
-          var pct = parseInt(opt.dataset.pct, 10);
-          var full = variant.price * qty;
-          var final = Math.round(full * (100 - pct) / 100);
-          var price = opt.querySelector('.lf-bundle__price');
-          var fullEl = opt.querySelector('.lf-bundle__full');
-          var saved = opt.querySelector('.lf-bundle__saved');
-          if (price) price.textContent = money(final);
-          if (fullEl) fullEl.textContent = money(full);
-          if (saved) saved.textContent = money(full - final);
-        });
+
+    function openCart(cart) {
+      document.dispatchEvent(new CustomEvent('cart:update', { bubbles: true, detail: { resource: cart, sourceId: box.id, data: { source: 'lf-bundle', itemCount: cart && cart.item_count } } }));
+      if (typeof window.upcartOpenCart === 'function') {
+        if (typeof window.upcartRefreshCart === 'function') window.upcartRefreshCart();
+        window.upcartOpenCart();
+        return;
       }
-      setTimeout(sync, 50);
-    });
-    // El formulario va después de este bloque: se sincroniza al cargar y justo antes de enviar
-    document.addEventListener('submit', function (e) {
-      if (e.target && e.target.id === box.dataset.form) sync();
-    }, true);
+      var drawer = document.querySelector('cart-drawer-component');
+      if (drawer && typeof drawer.open === 'function') { drawer.open(); return; }
+      window.location.href = '/cart';
+    }
+
+    // Añade todas las piezas del pack en una sola petición. Se escucha en window (fase de captura)
+    // para adelantarse a Upcart y al tema, que capturan el clic de "Añadir al carrito" por su cuenta.
+    var busy = false;
+    function addPack(e) {
+      var f = form();
+      if (!f) return;
+      var btn = e.type === 'click' ? e.target.closest && e.target.closest('button[name="add"]') : null;
+      if (e.type === 'click' && (!btn || !f.contains(btn))) return;
+      if (e.type === 'submit' && e.target !== f) return;
+      var list = ids();
+      if (!list.length) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (busy) return;
+      busy = true;
+      var submit = f.querySelector('button[name="add"]');
+      if (submit) submit.setAttribute('aria-busy', 'true');
+      fetch('/cart/add.js', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ items: list.map(function (id) { return { id: parseInt(id, 10), quantity: 1 }; }) })
+      })
+        .then(function (r) { if (!r.ok) throw r; return fetch('/cart.js', { credentials: 'same-origin' }); })
+        .then(function (r) { return r.json(); })
+        .then(openCart)
+        .catch(function () { alert('No se ha podido añadir el pack. Inténtalo de nuevo.'); })
+        .finally(function () { busy = false; if (submit) submit.removeAttribute('aria-busy'); });
+    }
+    window.addEventListener('click', addPack, true);
+    window.addEventListener('submit', addPack, true);
+
+    box.addEventListener('change', sync);
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sync);
     else sync();
   })();
 </script>
-{%- endif -%}
+{%- endunless -%}
 <style>
   .lf-bundle{display:grid;gap:10px;margin:8px 0 4px}
   .lf-bundle__head{display:flex;align-items:center;gap:10px;margin:0 0 2px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1e1a17}
@@ -138,8 +182,11 @@
   .lf-bundle__opt:has(input:focus-visible){outline:2px solid #9c5b3e;outline-offset:2px}
   .lf-bundle__radio{flex:0 0 18px;width:18px;height:18px;border:1.5px solid #9c8b7d;border-radius:50%;background:#fff}
   .lf-bundle__opt:has(input:checked) .lf-bundle__radio{border-color:#9c5b3e;box-shadow:inset 0 0 0 4px #fff;background:#9c5b3e}
+  .lf-bundle__thumbs{display:flex;flex:0 0 auto}
+  .lf-bundle__thumbs img{width:40px;height:40px;object-fit:cover;border-radius:6px;border:2px solid #fff;background:#fff;box-shadow:0 0 0 1px #e4d9ce}
+  .lf-bundle__thumbs img + img{margin-left:-14px}
   .lf-bundle__info{flex:1;display:grid;gap:2px;min-width:0}
-  .lf-bundle__title{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:16px;font-weight:600;color:#1e1a17;line-height:1.25}
+  .lf-bundle__title{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;font-size:15px;font-weight:600;color:#1e1a17;line-height:1.25}
   .lf-bundle__pct{font-size:11px;font-weight:700;letter-spacing:.04em;color:#fff;background:#1e1a17;border-radius:4px;padding:3px 6px}
   .lf-bundle__sub{font-size:13px;color:#5a514a}
   .lf-bundle__sub b{color:#a23b2c;font-weight:700}
@@ -148,35 +195,37 @@
   .lf-bundle__price{font-size:17px;font-weight:700;color:#1e1a17;white-space:nowrap}
   .lf-bundle__full{font-size:13px;color:#8a8079;white-space:nowrap}
   .lf-bundle__badge{position:absolute;top:-10px;right:14px;background:#9c5b3e;color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+  @media (max-width:420px){.lf-bundle__opt{gap:10px;padding:14px 12px}.lf-bundle__thumbs img{width:34px;height:34px}}
 </style>
 {% schema %}
 {
-  "name": "LF · Bundle por cantidad",
+  "name": "LF · Bundle de variantes",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Título", "default": "Compra más y ahorra" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Elige tu pack y ahorra" },
     { "type": "range", "id": "default_tier", "label": "Opción preseleccionada", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "paragraph", "content": "En \"Piezas\" escribe los nombres de las variantes separados por comas, tal cual están en el producto. [ahorro] se cambia por el dinero ahorrado." },
     { "type": "header", "content": "Opción 1" },
-    { "type": "text", "id": "title_1", "label": "Título", "default": "1 pulsera" },
-    { "type": "text", "id": "sub_1", "label": "Subtítulo", "default": "Precio normal" },
-    { "type": "number", "id": "qty_1", "label": "Unidades", "default": 1 },
+    { "type": "text", "id": "title_1", "label": "Título", "default": "Pulsera" },
+    { "type": "text", "id": "items_1", "label": "Piezas", "default": "Pulsera" },
+    { "type": "text", "id": "sub_1", "label": "Subtítulo", "default": "Brilla en la oscuridad" },
     { "type": "number", "id": "pct_1", "label": "% de descuento", "default": 0 },
     { "type": "text", "id": "badge_1", "label": "Etiqueta" },
     { "type": "text", "id": "perk_1", "label": "Ventaja extra" },
     { "type": "header", "content": "Opción 2" },
-    { "type": "text", "id": "title_2", "label": "Título", "default": "2 pulseras" },
-    { "type": "text", "id": "sub_2", "label": "Subtítulo", "info": "[ahorro] se cambia por el dinero ahorrado", "default": "Ahorras [ahorro]" },
-    { "type": "number", "id": "qty_2", "label": "Unidades", "default": 2 },
+    { "type": "text", "id": "title_2", "label": "Título", "default": "Pulsera + Collar" },
+    { "type": "text", "id": "items_2", "label": "Piezas", "default": "Pulsera, Collar" },
+    { "type": "text", "id": "sub_2", "label": "Subtítulo", "default": "Ahorras [ahorro]" },
     { "type": "number", "id": "pct_2", "label": "% de descuento", "default": 20 },
     { "type": "text", "id": "badge_2", "label": "Etiqueta", "default": "Más vendido" },
-    { "type": "text", "id": "perk_2", "label": "Ventaja extra", "default": "Una para ti y otra para regalar" },
+    { "type": "text", "id": "perk_2", "label": "Ventaja extra", "default": "Conjunto a juego" },
     { "type": "header", "content": "Opción 3" },
-    { "type": "text", "id": "title_3", "label": "Título", "default": "3 pulseras" },
-    { "type": "text", "id": "sub_3", "label": "Subtítulo", "info": "[ahorro] se cambia por el dinero ahorrado", "default": "Ahorras [ahorro]" },
-    { "type": "number", "id": "qty_3", "label": "Unidades", "default": 3 },
+    { "type": "text", "id": "title_3", "label": "Título", "default": "Set completo: Pulsera + Collar + Anillo" },
+    { "type": "text", "id": "items_3", "label": "Piezas", "default": "Pulsera, Collar, Anillo" },
+    { "type": "text", "id": "sub_3", "label": "Subtítulo", "default": "Ahorras [ahorro]" },
     { "type": "number", "id": "pct_3", "label": "% de descuento", "default": 30 },
-    { "type": "text", "id": "badge_3", "label": "Etiqueta", "default": "Mejor precio" },
-    { "type": "text", "id": "perk_3", "label": "Ventaja extra", "default": "El mejor precio por pulsera" }
+    { "type": "text", "id": "badge_3", "label": "Etiqueta", "default": "Mejor oferta" },
+    { "type": "text", "id": "perk_3", "label": "Ventaja extra", "default": "El anillo a mitad de precio" }
   ],
-  "presets": [{ "name": "LF · Bundle por cantidad", "category": "Product" }]
+  "presets": [{ "name": "LF · Bundle de variantes", "category": "Product" }]
 }
 {% endschema %}
