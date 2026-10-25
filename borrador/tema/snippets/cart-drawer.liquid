@@ -21,6 +21,11 @@
     src="{{ 'cart-drawer.js' | asset_url }}"
     fetchpriority="low"
   ></script>
+  <script
+    type="module"
+    src="{{ 'lf-cart-upsell.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
 
   {% capture empty_cart_drawer_content %}
     <div
@@ -114,6 +119,8 @@
                   {%- comment -%} LF · Barra de descuento por cantidad (mismos tramos que blocks/_cart-summary.liquid) {%- endcomment -%}
                   <div class="lf-drawer-tier">{% render 'lf-tier-bar', tiers: '2:15,3:20,4:25' %}</div>
                   {% render 'cart-products', context: 'drawer' %}
+                  {%- comment -%} LF · Sugerencias de "Lo más deseado" (se añaden sin salir del carrito) {%- endcomment -%}
+                  <div class="lf-drawer-upsell">{% render 'lf-cart-upsell', collection: 'lo-mas-deseado', limit: 6 %}</div>
                   {%- comment -%} LF · Sellos y "Compra tranquila" (se desplazan con las prendas) {%- endcomment -%}
                   <div class="lf-drawer-trust">{% render 'lf-cart-trust', hide_micro: true %}</div>
                 </scroll-hint>
@@ -273,6 +280,10 @@
 
   .lf-drawer-trust {
     margin-block: var(--gap-xl);
+  }
+
+  .lf-drawer-upsell {
+    margin-block-start: var(--gap-xl);
   }
 
   @media screen and (prefers-reduced-motion: no-preference) {

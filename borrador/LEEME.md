@@ -24,6 +24,12 @@ Carrito: en esta copia Upcart está desactivado (solo en la copia) y se usa el c
 prendas los sellos + métodos de pago + «Compra tranquila», y junto a «Pagar» el microtexto de garantía
 (snippets/cart-drawer.liquid y snippets/lf-cart-trust.liquid). Tras publicar y comprobar, desinstalar Upcart.
 
+Sugerencias en el carrito lateral: «Completa tu look», hasta 6 productos de la colección «Lo más deseado»
+(sin repetir los que ya están en el carrito), con selector de talla/color y botón «Añadir» que añade sin salir
+del carrito (snippets/lf-cart-upsell.liquid + assets/lf-cart-upsell.js). Para cambiar qué sale, edita esa
+colección en Shopify. La página /cart también sugiere «Lo más deseado» y queda traducida (templates/cart.json).
+«Set Sueño Luminoso -30%»: se mantiene como oferta exclusiva (decisión de la dueña, 25/10).
+
 ## Cambio de descuentos (pedido el 25/10)
 
 Aplicado en la copia del tema (textos, anuncios, popup, ficha, tarjetas, pack de la pulsera y barra del carrito):
