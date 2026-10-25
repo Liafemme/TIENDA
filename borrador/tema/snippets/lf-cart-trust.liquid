@@ -6,12 +6,19 @@
   - Iconos de los métodos de pago activos en Shopify.
   - "Compra tranquila": artículo dañado/equivocado y plazo de reembolso.
   - Nota media real de Judge.me (solo si ya hay reseñas).
+  Parámetros (carrito lateral): only_micro: true → solo el microtexto; hide_micro: true → todo menos el microtexto.
 {%- endcomment -%}
-<div class="lf-ctrust">
+{%- capture lf_micro -%}
   <p class="lf-ctrust__micro">
     {% render 'lf-icon', icon: 'lock', size: 14 %}
     <span>Pago 100% seguro y cifrado. Si no te encanta, tienes 30 días para devolverlo.</span>
   </p>
+{%- endcapture -%}
+{%- if only_micro -%}
+<div class="lf-ctrust">{{ lf_micro }}</div>
+{%- else -%}
+<div class="lf-ctrust">
+  {%- unless hide_micro -%}{{ lf_micro }}{%- endunless -%}
 
   <ul class="lf-ctrust__grid" role="list">
     <li>{% render 'lf-icon', icon: 'truck', size: 22 %}<span><strong>Envío gratis</strong>con seguimiento</span></li>
@@ -41,6 +48,7 @@
 
   {% render 'lf-store-rating', style: 'inline' %}
 </div>
+{%- endif -%}
 
 {% stylesheet %}
   .lf-ctrust{width:100%;display:grid;gap:12px;margin:0;color:var(--lf-ink,#1e1a17)}

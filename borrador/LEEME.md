@@ -19,6 +19,11 @@ Vista previa: https://liafemme.com/?preview_theme_id=210959794507
 Incluye: barra de tramos y bloque de confianza ampliado en el carrito, y bienvenida 10 % / tramos 15-20-25 % en toda la web.
 La sección «RESEÑAS FAKE» de la ficha está DESACTIVADA en esta copia (no borrada).
 
+Carrito: en esta copia Upcart está desactivado (solo en la copia) y se usa el carrito lateral del tema
+(Ajustes del tema → Carrito: «Cajón», se abre solo al añadir). Lleva arriba la barra de tramos, debajo de las
+prendas los sellos + métodos de pago + «Compra tranquila», y junto a «Pagar» el microtexto de garantía
+(snippets/cart-drawer.liquid y snippets/lf-cart-trust.liquid). Tras publicar y comprobar, desinstalar Upcart.
+
 ## Cambio de descuentos (pedido el 25/10)
 
 Aplicado en la copia del tema (textos, anuncios, popup, ficha, tarjetas, pack de la pulsera y barra del carrito):
