@@ -30,6 +30,11 @@ del carrito (snippets/lf-cart-upsell.liquid + assets/lf-cart-upsell.js). Para ca
 colección en Shopify. La página /cart también sugiere «Lo más deseado» y queda traducida (templates/cart.json).
 «Set Sueño Luminoso -30%»: se mantiene como oferta exclusiva (decisión de la dueña, 25/10).
 
+Carrito lateral más ligero (25/10): abajo y siempre visible solo descuento, total y botón «Continuar»
+(locales/es.json → content.checkout = "Continuar"; en el carrito lateral se ocultan el campo de código,
+la nota de impuestos y los botones exprés, que siguen en la página de pago). Confianza compacta
+(4 iconos + logos de pago); «Compra tranquila» solo en la página /cart. Sugerencias: 4 productos.
+
 ## Cambio de descuentos (pedido el 25/10)
 
 Aplicado en la copia del tema (textos, anuncios, popup, ficha, tarjetas, pack de la pulsera y barra del carrito):

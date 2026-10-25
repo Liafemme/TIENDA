@@ -6,19 +6,33 @@
   - Iconos de los métodos de pago activos en Shopify.
   - "Compra tranquila": artículo dañado/equivocado y plazo de reembolso.
   - Nota media real de Judge.me (solo si ya hay reseñas).
-  Parámetros (carrito lateral): only_micro: true → solo el microtexto; hide_micro: true → todo menos el microtexto.
+  Parámetro compact: true (carrito lateral) → una fila de 4 iconos pequeños + logos de pago, sin "Compra tranquila".
 {%- endcomment -%}
-{%- capture lf_micro -%}
+{%- if compact -%}
+<div class="lf-ctrust lf-ctrust--compact">
+  <ul class="lf-ctrust__row" role="list">
+    <li>{% render 'lf-icon', icon: 'truck', size: 18 %}<span>Envío gratis</span></li>
+    <li>{% render 'lf-icon', icon: 'return', size: 18 %}<span>30 días para devolver</span></li>
+    <li>{% render 'lf-icon', icon: 'lock', size: 18 %}<span>Pago seguro</span></li>
+    <li>{% render 'lf-icon', icon: 'chat', size: 18 %}<span>Atención 24 h</span></li>
+  </ul>
+  {%- if shop.enabled_payment_types.size > 0 -%}
+    <div class="lf-ctrust__pay">
+      <ul role="list" aria-label="Métodos de pago">
+        {%- for type in shop.enabled_payment_types -%}
+          <li>{{ type | payment_type_svg_tag }}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+  {% render 'lf-store-rating', style: 'inline' %}
+</div>
+{%- else -%}
+<div class="lf-ctrust">
   <p class="lf-ctrust__micro">
     {% render 'lf-icon', icon: 'lock', size: 14 %}
     <span>Pago 100% seguro y cifrado. Si no te encanta, tienes 30 días para devolverlo.</span>
   </p>
-{%- endcapture -%}
-{%- if only_micro -%}
-<div class="lf-ctrust">{{ lf_micro }}</div>
-{%- else -%}
-<div class="lf-ctrust">
-  {%- unless hide_micro -%}{{ lf_micro }}{%- endunless -%}
 
   <ul class="lf-ctrust__grid" role="list">
     <li>{% render 'lf-icon', icon: 'truck', size: 22 %}<span><strong>Envío gratis</strong>con seguimiento</span></li>
@@ -66,4 +80,9 @@
   .lf-ctrust__box-title .lf-icon{color:#3f7a4f}
   .lf-ctrust__box ul{margin:0;padding:0 0 0 18px;display:grid;gap:4px;font-size:12px;line-height:1.45;color:var(--lf-muted,#6b625a)}
   .lf-ctrust .lf-srating{justify-content:center}
+  .lf-ctrust--compact{gap:10px}
+  .lf-ctrust__row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0;padding:10px 4px;list-style:none;border-radius:8px;background:var(--lf-soft,#f3ede5)}
+  .lf-ctrust__row li{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:10px;line-height:1.2;color:var(--lf-muted,#6b625a)}
+  .lf-ctrust__row .lf-icon{color:var(--lf-accent,#9c5b3e)}
+  .lf-ctrust--compact .lf-ctrust__pay svg{width:32px;height:20px}
 {% endstylesheet %}

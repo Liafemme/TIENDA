@@ -120,15 +120,13 @@
                   <div class="lf-drawer-tier">{% render 'lf-tier-bar', tiers: '2:15,3:20,4:25' %}</div>
                   {% render 'cart-products', context: 'drawer' %}
                   {%- comment -%} LF · Sugerencias de "Lo más deseado" (se añaden sin salir del carrito) {%- endcomment -%}
-                  <div class="lf-drawer-upsell">{% render 'lf-cart-upsell', collection: 'lo-mas-deseado', limit: 6 %}</div>
-                  {%- comment -%} LF · Sellos y "Compra tranquila" (se desplazan con las prendas) {%- endcomment -%}
-                  <div class="lf-drawer-trust">{% render 'lf-cart-trust', hide_micro: true %}</div>
+                  <div class="lf-drawer-upsell">{% render 'lf-cart-upsell', collection: 'lo-mas-deseado', limit: 4 %}</div>
+                  {%- comment -%} LF · Confianza en versión compacta (iconos + métodos de pago) {%- endcomment -%}
+                  <div class="lf-drawer-trust">{% render 'lf-cart-trust', compact: true %}</div>
                 </scroll-hint>
 
                 <div class="cart-drawer__summary">
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
-                  {%- comment -%} LF · Microtexto de garantía junto al botón de pagar {%- endcomment -%}
-                  {% render 'lf-cart-trust', only_micro: true %}
                 </div>
               </scroll-hint>
             {%- endif -%}
@@ -284,6 +282,31 @@
 
   .lf-drawer-upsell {
     margin-block-start: var(--gap-xl);
+  }
+
+  /* LF · Resumen ligero en el carrito lateral para que "Continuar" quede siempre fijo abajo.
+     El código de descuento y los pagos exprés siguen disponibles en la página de pago. */
+  .cart-drawer__summary .cart-actions,
+  .cart-drawer__summary .cart-totals__tax-note,
+  .cart-drawer__summary .additional-checkout-buttons {
+    display: none;
+  }
+
+  .cart-drawer__summary {
+    gap: var(--gap-md);
+  }
+
+  /* El resumen ya es corto: lo dejamos fijo aunque cart-drawer.js lo mida antes de aplicar estilos. */
+  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__summary {
+    position: sticky;
+  }
+
+  .lf-drawer-upsell .lf-upsell__track {
+    grid-auto-columns: 118px;
+  }
+
+  .lf-drawer-upsell .lf-upsell__heading {
+    font-size: 16px;
   }
 
   @media screen and (prefers-reduced-motion: no-preference) {
