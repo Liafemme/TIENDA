@@ -11,6 +11,14 @@ No se ha creado ningún descuento ni cambiado Judge.me, Upcart o el checkout.
 
 ---
 
+## v12 (25/10): copia limpia del tema publicado
+
+Copia sin publicar «Lia Femme – v12 bienvenida 10% + tramos + confianza carrito (BORRADOR)», id 210959794507,
+hecha a partir del tema publicado tal y como estaba el 25/10 (con los cambios de ese día).
+Vista previa: https://liafemme.com/?preview_theme_id=210959794507
+Incluye: barra de tramos y bloque de confianza ampliado en el carrito, y bienvenida 10 % / tramos 15-20-25 % en toda la web.
+La sección «RESEÑAS FAKE» de la ficha está DESACTIVADA en esta copia (no borrada).
+
 ## Cambio de descuentos (pedido el 25/10)
 
 Aplicado en la copia del tema (textos, anuncios, popup, ficha, tarjetas, pack de la pulsera y barra del carrito):
