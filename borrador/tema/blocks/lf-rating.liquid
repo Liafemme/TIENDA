@@ -1,0 +1,36 @@
+{%- comment -%}
+  Nota media del producto bajo el título (datos reales de Judge.me).
+  Al tocarla baja hasta las reseñas con foto del widget de Judge.me.
+  Si el producto no tiene reseñas, no se muestra nada a las clientas
+  (solo un aviso dentro del editor de temas).
+{%- endcomment -%}
+{%- liquid
+  assign p = closest.product
+  assign r = p.metafields.reviews.rating.value
+  assign n = p.metafields.reviews.rating_count.value | default: 0
+-%}
+{%- if r and n > 0 -%}
+  {%- assign avg = r.rating | round: 1 -%}
+  <a href="#judgeme_product_reviews" class="lf-prating" {{ block.shopify_attributes }}>
+    {% render 'lf-stars', rating: avg, scale: r.scale_max, size: 15 %}
+    <span><strong>{{ avg | append: '' | replace: '.', ',' }}</strong> · {{ n }} {% if n == 1 %}reseña{% else %}reseñas{% endif %}</span>
+  </a>
+{%- elsif request.design_mode -%}
+  <p class="lf-prating lf-prating--empty" {{ block.shopify_attributes }}>
+    (Solo lo ves tú en el editor) Este producto aún no tiene reseñas: las estrellas aparecerán solas en cuanto tenga la primera.
+  </p>
+{%- endif -%}
+{% stylesheet %}
+  .lf-prating{display:inline-flex;align-items:center;gap:8px;margin:-4px 0 2px;font-size:13px;color:var(--lf-ink,#1e1a17);text-decoration:none}
+  .lf-prating span{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--lf-line,#e7dfd5)}
+  .lf-prating strong{font-weight:600}
+  .lf-prating--empty{font-size:12px;color:var(--lf-muted,#6b625a);font-style:italic}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LF · Nota de reseñas",
+  "settings": [],
+  "presets": [{ "name": "LF · Nota de reseñas", "category": "Product" }]
+}
+{% endschema %}

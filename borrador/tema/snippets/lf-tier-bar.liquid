@@ -1,0 +1,89 @@
+{%- comment -%}
+  Barra de progreso del descuento por cantidad (carrito).
+  - tiers: tramos "prendas:porcentaje" separados por comas, de menor a mayor.
+    Ej.: '2:20,3:25,4:30'. Deben coincidir con los descuentos automáticos de
+    Shopify → Descuentos (la barra solo informa; el descuento lo aplica Shopify).
+  El ahorro que se muestra es el real del carrito (todos los descuentos aplicados).
+{%- endcomment -%}
+{%- liquid
+  assign tier_list = tiers | split: ','
+  assign n_tiers = tier_list.size
+  assign count = cart.item_count
+  assign reached = -1
+  assign next_qty = 0
+  assign next_pct = 0
+  assign cur_pct = 0
+  for t in tier_list
+    assign parts = t | split: ':'
+    assign q = parts[0] | strip | plus: 0
+    if count >= q
+      assign reached = forloop.index0
+      assign cur_pct = parts[1] | strip
+    elsif next_qty == 0
+      assign next_qty = q
+      assign next_pct = parts[1] | strip
+    endif
+  endfor
+
+  comment
+    Relleno: cada tramo ocupa el mismo espacio; entre dos tramos avanza en proporción.
+  endcomment
+  assign step = 100.0 | divided_by: n_tiers
+  if reached == -1
+    assign prev_q = 0
+    assign prev_pos = 0
+  else
+    assign prev_parts = tier_list[reached] | split: ':'
+    assign prev_q = prev_parts[0] | strip | plus: 0
+    assign prev_pos = reached | plus: 1 | times: step
+  endif
+  if next_qty > 0
+    assign span = next_qty | minus: prev_q
+    assign frac = count | minus: prev_q | times: 1.0 | divided_by: span
+    assign fill = frac | times: step | plus: prev_pos
+    assign missing = next_qty | minus: count
+  else
+    assign fill = 100
+  endif
+  assign saved = cart.original_total_price | minus: cart.total_price
+-%}
+{%- if count > 0 and n_tiers > 0 -%}
+<div class="lf-tier" role="group" aria-label="Descuento por cantidad">
+  <p class="lf-tier__msg">
+    {%- if next_qty > 0 -%}
+      Añade <strong>{{ missing }} {% if missing == 1 %}prenda{% else %}prendas{% endif %} más</strong> y ahorra un <strong>{{ next_pct }}%</strong> en todo el pedido
+    {%- else -%}
+      ¡Genial! Tienes el <strong>máximo descuento: -{{ cur_pct }}%</strong>
+    {%- endif -%}
+  </p>
+  <div class="lf-tier__bar">
+    <div class="lf-tier__fill" style="width:{{ fill | at_most: 100 | round: 1 }}%"></div>
+    {%- for t in tier_list -%}
+      {%- assign parts = t | split: ':' -%}
+      {%- assign q = parts[0] | strip | plus: 0 -%}
+      {%- assign pos = forloop.index | times: step -%}
+      <span class="lf-tier__node{% if count >= q %} is-on{% endif %}" style="left:{{ pos }}%">
+        <span class="lf-tier__dot">{% if count >= q %}✓{% endif %}</span>
+        <span class="lf-tier__lbl"><b>-{{ parts[1] | strip }}%</b>{{ q }}{% if forloop.last %}+{% endif %} prendas</span>
+      </span>
+    {%- endfor -%}
+  </div>
+  {%- if saved > 0 -%}
+    <p class="lf-tier__saved">Estás ahorrando <strong>{{ saved | money }}</strong></p>
+  {%- endif -%}
+</div>
+{%- endif -%}
+
+{% stylesheet %}
+  .lf-tier{margin:0 0 18px;padding:14px 16px 12px;border:1px solid var(--lf-line,#e7dfd5);border-radius:10px;background:var(--lf-soft,#f3ede5);color:var(--lf-ink,#1e1a17)}
+  .lf-tier__msg{margin:0 0 14px;font-size:14px;line-height:1.4;text-align:center}
+  .lf-tier__msg strong{color:var(--lf-sale,#a23b2c)}
+  .lf-tier__bar{position:relative;height:6px;margin:0 30px 48px 4px;border-radius:999px;background:#e2d6c8}
+  .lf-tier__fill{height:100%;border-radius:inherit;background:var(--lf-accent,#9c5b3e);transition:width .4s ease}
+  .lf-tier__node{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+  .lf-tier__dot{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #e2d6c8;font-size:11px;color:#fff;line-height:1}
+  .lf-tier__node.is-on .lf-tier__dot{background:var(--lf-accent,#9c5b3e);border-color:var(--lf-accent,#9c5b3e)}
+  .lf-tier__lbl{position:absolute;top:24px;display:flex;flex-direction:column;align-items:center;font-size:11px;line-height:1.25;color:var(--lf-muted,#6b625a);white-space:nowrap}
+  .lf-tier__lbl b{font-size:12px;color:var(--lf-ink,#1e1a17)}
+  .lf-tier__saved{margin:0;font-size:13px;text-align:center;color:#3f7a4f}
+{% endstylesheet %}

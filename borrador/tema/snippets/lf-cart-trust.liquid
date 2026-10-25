@@ -1,0 +1,28 @@
+{%- comment -%}
+  Confianza junto al botón de pagar del carrito:
+  microtexto de garantía, 3 sellos (envío gratis, 30 días, pago seguro) y nota media real.
+{%- endcomment -%}
+<div class="lf-ctrust">
+  <p class="lf-ctrust__micro">
+    {% render 'lf-icon', icon: 'lock', size: 14 %}
+    Pago 100% seguro y cifrado. Si no te encanta, tienes 30 días para devolverlo.
+  </p>
+  <ul class="lf-ctrust__row" role="list">
+    <li>{% render 'lf-icon', icon: 'truck', size: 22 %}<span><strong>Envío gratis</strong>con seguimiento</span></li>
+    <li>{% render 'lf-icon', icon: 'return', size: 22 %}<span><strong>30 días</strong>para devolver</span></li>
+    <li>{% render 'lf-icon', icon: 'lock', size: 22 %}<span><strong>Pago seguro</strong>tarjeta, Apple Pay, Google Pay</span></li>
+  </ul>
+  {% render 'lf-store-rating', style: 'inline' %}
+</div>
+
+{% stylesheet %}
+  .lf-ctrust{display:grid;gap:12px;margin-top:12px;color:var(--lf-ink,#1e1a17)}
+  .lf-ctrust__micro{display:flex;gap:6px;align-items:flex-start;justify-content:center;margin:0;font-size:12px;line-height:1.4;color:var(--lf-muted,#6b625a);text-align:center}
+  .lf-ctrust__micro .lf-icon{flex:0 0 auto;margin-top:1px}
+  .lf-ctrust__row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:12px 8px;list-style:none;border-radius:10px;background:var(--lf-soft,#f3ede5)}
+  .lf-ctrust__row li{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+  .lf-ctrust__row .lf-icon{color:var(--lf-accent,#9c5b3e)}
+  .lf-ctrust__row span{font-size:11px;line-height:1.3;color:var(--lf-muted,#6b625a)}
+  .lf-ctrust__row strong{display:block;font-size:12px;font-weight:600;color:var(--lf-ink,#1e1a17)}
+  .lf-ctrust .lf-srating{justify-content:center}
+{% endstylesheet %}

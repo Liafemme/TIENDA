@@ -1,0 +1,317 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "lf-hero",
+      "settings": {
+        "collection": "otono-2026",
+        "eyebrow": "Nueva colección",
+        "heading": "Otoño 2026",
+        "text": "Prendas cómodas y elegantes para tu día a día. Envío gratis a toda España.",
+        "btn1": "Comprar novedades",
+        "link1": "shopify://collections/otono-2026",
+        "btn2": "Lo más deseado",
+        "link2": "shopify://collections/lo-mas-deseado"
+      }
+    },
+    "trust": {
+      "type": "lf-trust-bar",
+      "blocks": {
+        "trust_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Envío gratis",
+            "text": "Con seguimiento a toda España"
+          }
+        },
+        "trust_2": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30 días",
+            "text": "Para cambios y devoluciones"
+          }
+        },
+        "trust_3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Pago seguro",
+            "text": "Tarjeta, Apple Pay y Google Pay"
+          }
+        },
+        "trust_4": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "title": "Te respondemos en 24 h",
+            "text": "liafemme23@gmail.com"
+          }
+        }
+      },
+      "block_order": [
+        "trust_1",
+        "trust_2",
+        "trust_3",
+        "trust_4"
+      ],
+      "settings": {
+        "bg": "#f3ede5"
+      }
+    },
+    "cats": {
+      "type": "lf-categories",
+      "blocks": {
+        "cats_1": {
+          "type": "cat",
+          "settings": {
+            "collection": "vestidos"
+          }
+        },
+        "cats_2": {
+          "type": "cat",
+          "settings": {
+            "collection": "abrigos-y-jerseys",
+            "label": "Jerséis y abrigos"
+          }
+        },
+        "cats_3": {
+          "type": "cat",
+          "settings": {
+            "collection": "pantalones-y-conjuntos",
+            "label": "Conjuntos"
+          }
+        },
+        "cats_4": {
+          "type": "cat",
+          "settings": {
+            "collection": "mocasines"
+          }
+        },
+        "cats_5": {
+          "type": "cat",
+          "settings": {
+            "collection": "accesorios",
+            "label": "Bolsos"
+          }
+        },
+        "cats_6": {
+          "type": "cat",
+          "settings": {
+            "collection": "moda-hombre",
+            "label": "Hombre"
+          }
+        }
+      },
+      "block_order": [
+        "cats_1",
+        "cats_2",
+        "cats_3",
+        "cats_4",
+        "cats_5",
+        "cats_6"
+      ],
+      "settings": {
+        "eyebrow": "Descubre",
+        "heading": "Compra por categoría"
+      }
+    },
+    "best": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "lo-mas-deseado",
+        "eyebrow": "Favoritos",
+        "heading": "Lo más deseado",
+        "text": "Las prendas que más se están llevando esta temporada.",
+        "limit": 8,
+        "button": "Ver todos los favoritos",
+        "bg": "#fbf8f4"
+      }
+    },
+    "story": {
+      "type": "lf-story",
+      "blocks": {
+        "story_1": {
+          "type": "point",
+          "settings": {
+            "text": "Envío gratis a toda España con seguimiento"
+          }
+        },
+        "story_2": {
+          "type": "point",
+          "settings": {
+            "text": "30 días para cambiar de opinión"
+          }
+        },
+        "story_3": {
+          "type": "point",
+          "settings": {
+            "text": "Atención cercana por email, en español"
+          }
+        }
+      },
+      "block_order": [
+        "story_1",
+        "story_2",
+        "story_3"
+      ],
+      "settings": {
+        "collection": "vestidos",
+        "eyebrow": "Lia Femme",
+        "heading": "Moda que te hace sentir tú",
+        "text": "<p>En Lia Femme seleccionamos prendas femeninas, cómodas y fáciles de combinar, para que te sientas bien desde el lunes hasta el fin de semana.</p><p>Elegimos cada pieza pensando en tejidos agradables, cortes favorecedores y precios justos.</p>",
+        "button": "Descubrir la colección",
+        "link": "shopify://collections/moda-mujer"
+      }
+    },
+    "new": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "otono-2026",
+        "eyebrow": "Recién llegado",
+        "heading": "Novedades de otoño",
+        "limit": 8,
+        "button": "Ver todas las novedades",
+        "bg": "#f3ede5"
+      }
+    },
+    "shoes": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "mocasines",
+        "eyebrow": "Comodidad todo el día",
+        "heading": "Nuestros mocasines",
+        "limit": 4,
+        "button": "Ver todos los mocasines",
+        "bg": "#fbf8f4"
+      }
+    },
+    "guar": {
+      "type": "lf-guarantee",
+      "blocks": {
+        "guar_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Envío gratis con seguimiento",
+            "text": "Todos los pedidos a España viajan gratis y con número de seguimiento, para que sepas siempre dónde está el tuyo."
+          }
+        },
+        "guar_2": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30 días para devolver",
+            "text": "Si algo no te convence, tienes 30 días desde que lo recibes para solicitar la devolución."
+          }
+        },
+        "guar_3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Pago 100% seguro",
+            "text": "Pagos cifrados procesados por Shopify. Aceptamos tarjeta, Apple Pay, Google Pay y Shop Pay."
+          }
+        },
+        "guar_4": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "title": "Siempre a tu lado",
+            "text": "Escríbenos a liafemme23@gmail.com y te respondemos en menos de 24 horas."
+          }
+        }
+      },
+      "block_order": [
+        "guar_1",
+        "guar_2",
+        "guar_3",
+        "guar_4"
+      ],
+      "settings": {
+        "eyebrow": "Compra sin riesgo",
+        "heading": "Por qué comprar en Lia Femme"
+      }
+    },
+    "faq": {
+      "type": "lf-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Cuánto tarda en llegar mi pedido?",
+            "a": "<p>Preparamos tu pedido en 1-3 días laborables y la entrega en España suele tardar entre 7 y 14 días laborables. Recibirás un número de seguimiento por email en cuanto salga.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "qa",
+          "settings": {
+            "q": "¿El envío es gratis?",
+            "a": "<p>Sí. El envío es gratuito en todos los pedidos a España, sin compra mínima.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Puedo devolver un artículo?",
+            "a": "<p>Sí, tienes 30 días desde la recepción. Escríbenos a liafemme23@gmail.com con tu número de pedido y te indicamos los pasos. Consulta los detalles en nuestra <a href=\"/policies/refund-policy\">política de devoluciones</a>.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Cómo elijo mi talla?",
+            "a": "<p>Cada producto incluye su tabla de medidas. También puedes consultar nuestra <a href=\"/pages/guia-de-tallas\">guía de tallas</a> o escribirnos y te aconsejamos.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Qué métodos de pago aceptáis?",
+            "a": "<p>Tarjeta de débito o crédito, Apple Pay, Google Pay y Shop Pay. Todos los pagos están cifrados.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Cómo puedo seguir mi pedido?",
+            "a": "<p>Con el número de seguimiento que te enviamos por email, o desde <a href=\"/apps/parcelpanel\">Localizar pedido</a>.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "settings": {
+        "eyebrow": "Ayuda",
+        "heading": "Preguntas frecuentes",
+        "contact": "¿Otra duda? Escríbenos a <a href=\"mailto:liafemme23@gmail.com\">liafemme23@gmail.com</a>"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "cats",
+    "best",
+    "story",
+    "new",
+    "shoes",
+    "guar",
+    "faq"
+  ]
+}
