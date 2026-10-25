@@ -1,8 +1,9 @@
 # Borrador: reseñas, confianza en el checkout y barra de descuento
 
-**Estado: BORRADOR. No se ha cambiado nada en la tienda.** Solo he *leído* el tema publicado
-(«Lia Femme – v10 bundle mariposa»), los descuentos y las apps. Todo lo de esta carpeta
-está pendiente de que lo revises.
+**Estado: aplicado en una COPIA SIN PUBLICAR del tema** («Lia Femme – v11 reseñas + confianza + tramos
+(BORRADOR Claude)», id 210952454475). El tema publicado («v10 bundle mariposa») no se ha tocado.
+Vista previa: https://liafemme.com/?preview_theme_id=210952454475
+No se ha creado ningún descuento ni cambiado Judge.me, Upcart o el checkout.
 
 - `tema/`: archivos del tema tal y como quedarían (misma ruta que en Shopify).
 - `original/`: copia de los archivos actuales que se modifican, para comparar.
@@ -66,7 +67,7 @@ reseñas, la sección no aparece.
 `snippets/lf-tier-bar.liquid`, encima del total del carrito. Dice cuántas prendas faltan para el
 siguiente tramo, marca los tramos conseguidos y enseña **el ahorro real** del carrito.
 
-Tramos propuestos (se cambian en una línea de `snippets/cart-summary.liquid`: `tiers: '2:20,3:25,4:30'`):
+Tramos propuestos (se cambian en una línea de `blocks/_cart-summary.liquid`: `tiers: '2:20,3:25,4:30'`):
 
 | Prendas | Descuento | ¿Existe ya en Shopify? |
 |---|---|---|
@@ -105,5 +106,5 @@ lateral, lo mismo se configura dentro de Upcart (lo dejo descrito, sin tocarlo):
 Archivos que cambian respecto al tema actual:
 - Nuevos: `blocks/lf-rating.liquid`, `sections/lf-reviews.liquid`, `snippets/lf-stars.liquid`,
   `snippets/lf-store-rating.liquid`, `snippets/lf-tier-bar.liquid`, `snippets/lf-cart-trust.liquid`.
-- Modificados: `snippets/cart-summary.liquid` (2 líneas), `snippets/lf-product-card.liquid`,
+- Modificados: `blocks/_cart-summary.liquid` (bloque del carrito, 4 líneas), `snippets/lf-product-card.liquid`,
   `templates/product.json` (1 bloque), `templates/index.json` (1 sección).
