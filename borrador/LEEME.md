@@ -11,6 +11,19 @@ No se ha creado ningún descuento ni cambiado Judge.me, Upcart o el checkout.
 
 ---
 
+## Cambio de descuentos (pedido el 25/10)
+
+Aplicado en la copia del tema (textos, anuncios, popup, ficha, tarjetas, pack de la pulsera y barra del carrito):
+- Código de bienvenida: **BIENVENIDA10 · 10 % · un solo uso por clienta** (antes BIENVENIDA15 · 15 %).
+- Por cantidad: **2 prendas -15 % · 3 prendas -20 % · 4 o más -25 %** (antes 2 prendas -20 %).
+
+Pendiente en Shopify → Descuentos (cambia la tienda en vivo, se hace al publicar la copia):
+1. «Bienvenida 15% primera compra (código antiguo)» (código BIENVENIDA10): bajar a 10 % y renombrar. Ya es de un uso por clienta.
+2. BIENVENIDA15: desactivar.
+3. «Compra 2 y ahorra 20%»: bajar a 15 % y renombrar.
+4. Crear «Compra 3 y ahorra 20%» y «Compra 4 y ahorra 25%» (automáticos, todos los productos, sin combinar).
+5. Decidir qué pasa con «Set Sueño Luminoso -30%» (supera el tope del 25 %).
+
 ## Antes de nada: 3 cosas que he encontrado
 
 1. **Ningún producto tiene reseñas todavía en Judge.me** (los 50 productos activos tienen la nota vacía).
@@ -67,13 +80,13 @@ reseñas, la sección no aparece.
 `snippets/lf-tier-bar.liquid`, encima del total del carrito. Dice cuántas prendas faltan para el
 siguiente tramo, marca los tramos conseguidos y enseña **el ahorro real** del carrito.
 
-Tramos propuestos (se cambian en una línea de `blocks/_cart-summary.liquid`: `tiers: '2:20,3:25,4:30'`):
+Tramos propuestos (se cambian en una línea de `blocks/_cart-summary.liquid`: `tiers: '2:15,3:20,4:25'`):
 
 | Prendas | Descuento | ¿Existe ya en Shopify? |
 |---|---|---|
-| 2 | -20% | Sí («Compra 2 y ahorra 20%») |
-| 3 | -25% | **No, habría que crearlo** |
-| 4 o más | -30% | **No, habría que crearlo** |
+| 2 | -15% | Existe al 20 %: hay que bajarlo a 15 % |
+| 3 | -20% | **No, hay que crearlo** |
+| 4 o más | -25% | **No, hay que crearlo** |
 
 **Decide tú los porcentajes** (dependen de tu margen). La barra solo informa: el descuento lo aplica
 Shopify, así que antes de publicar hay que crear los descuentos automáticos de 3 y 4 prendas

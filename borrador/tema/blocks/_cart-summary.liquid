@@ -34,7 +34,7 @@
 >
   <div class="{{ cart_summary_inner_class }}">
     {%- comment -%} LF · Barra de descuento por cantidad (tramos = descuentos automáticos de Shopify) {%- endcomment -%}
-    {% render 'lf-tier-bar', tiers: '2:20,3:25,4:30' %}
+    {% render 'lf-tier-bar', tiers: '2:15,3:20,4:25' %}
     {% render 'cart-summary', accelerated_checkout_buttons_layout: 'vertical', section_id: section.id %}
     {%- comment -%} LF · Confianza junto al botón de pagar {%- endcomment -%}
     {% render 'lf-cart-trust' %}

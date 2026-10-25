@@ -160,10 +160,11 @@
                   "type": "lf-offer",
                   "settings": {
                     "show_welcome": true,
-                    "code": "BIENVENIDA15",
-                    "welcome_pct": 15,
+                    "code": "BIENVENIDA10",
+                    "welcome_pct": 10,
                     "show_duo": true,
-                    "duo_pct": 20
+                    "duo_pct": 15,
+                    "more_tiers": "3 prendas: -20% · 4 o más: -25%"
                   },
                   "blocks": {}
                 },
