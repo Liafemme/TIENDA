@@ -73,6 +73,13 @@
 
 .lf-hero__content{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 22px 48px;text-align:center}
 @media(min-width:750px){.lf-hero__content{padding-bottom:72px}}
+/* Móvil: marca y texto en flujo (una debajo de otro) para que nunca se monten; las fotos quedan de fondo */
+@media(max-width:749px){
+  .lf-hero.lf-hero{display:flex;flex-direction:column;min-height:min(82svh,760px)}
+  .lf-hero .lf-hero__media{position:absolute;inset:0;height:auto}
+  .lf-hero .lf-hero__brand{position:relative;flex-shrink:0;top:auto;transform:none;padding-top:28px}
+  .lf-hero .lf-hero__content{position:relative;flex-shrink:0;margin-top:auto;padding-top:28px}
+}
 .lf-hero__eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;margin:0 0 14px;opacity:.95}
 .lf-hero--hw .lf-hero__eyebrow{display:inline-block;padding:6px 14px;border-radius:999px;background:#e8772e;color:#1a1320;font-weight:700;letter-spacing:.2em;opacity:1}
 .lf-hero__title{font-family:var(--font-heading--family);font-weight:400;font-size:clamp(36px,6vw,72px);line-height:1.02;margin:0 auto 14px;max-width:900px;color:#fff}

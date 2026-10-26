@@ -23,3 +23,8 @@ Los tramos anunciados (2 = -15 %, 3 = -20 %, 4+ = -25 %) **no** son los que apli
 
 ## Después de Halloween
 Volver a publicar v12 (o desmarcar "Estilo Halloween" y cambiar textos). HALLOWEEN10 caduca solo.
+
+## v14 – arreglo móvil (sin publicar)
+Tema **"Lia Femme – v14 Halloween arreglo móvil (Claude)"** · vista previa: https://liafemme.com/?preview_theme_id=211062653259
+- Portada en móvil: "LIA FEMME" y el bloque de texto van uno debajo del otro, ya no se montan (probado de 320 a 430 px).
+- Quitado el botón "Comprar ofertas" de la portada (queda "Lo más deseado"). Ningún texto cambiado.
