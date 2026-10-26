@@ -17,9 +17,9 @@ Vista previa: https://liafemme.com/?preview_theme_id=211060687179
 ## En Shopify → Descuentos
 - Creado **HALLOWEEN10**: 10 % en todo el pedido, 1 uso por cliente, del 26/10 al 31/10 a las 24:00.
 
-## ⚠️ Pendiente de decidir (ya pasa en la tienda actual)
-Probado en el carrito: 1 prenda → -10 % (HALLOWEEN10) · 2, 3 y 4+ prendas → **-20 %** ("Compra 2 y ahorra 20%").
-Los tramos anunciados (2 = -15 %, 3 = -20 %, 4+ = -25 %) **no** son los que aplica Shopify.
+## Descuentos por cantidad (arreglado)
+Creados 3 descuentos automáticos (todo el pedido, sin fecha de fin): **2 prendas -15%**, **3 prendas -20%**, **4 o más -25%**.
+Desactivado el antiguo "Compra 2 y ahorra 20%". Probado en el carrito: 1 → -10% (HALLOWEEN10) · 2 → -15% · 3 → -20% · 4 y 5 → -25%.
 
 ## Después de Halloween
 Volver a publicar v12 (o desmarcar "Estilo Halloween" y cambiar textos). HALLOWEEN10 caduca solo.
