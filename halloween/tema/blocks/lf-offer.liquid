@@ -1,0 +1,103 @@
+{%- comment -%}
+  Muestra en la ficha de producto el precio final con los descuentos de Halloween que ya existen en Shopify:
+  - Código HALLOWEEN10 (se aplica solo en el carrito; ver snippets/lf-autodiscount.liquid)
+  - Descuento automático por cantidad (2, 3 y 4+ prendas)
+  Los porcentajes deben coincidir con los descuentos configurados en Shopify → Descuentos.
+  La cuenta atrás la rellena snippets/lf-halloween.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  assign p = closest.product
+  assign v = p.selected_or_first_available_variant
+  assign welcome = bs.show_welcome
+  if customer and customer.orders_count > 0
+    assign welcome = false
+  endif
+  assign w_factor = 100 | minus: bs.welcome_pct | divided_by: 100.0
+  assign d_factor = 100 | minus: bs.duo_pct | divided_by: 100.0
+  assign w_price = v.price | times: w_factor | round
+  assign d_price = v.price | times: d_factor | round
+-%}
+{%- if v -%}
+<div
+  class="lf-offer"
+  data-w="{{ w_factor }}"
+  data-d="{{ d_factor }}"
+  {{ block.shopify_attributes }}
+>
+  <p class="lf-offer__head">
+    <span><span aria-hidden="true">🎃</span> Oferta de Halloween</span>
+    <span class="lf-offer__cd" data-lf-hw-only>Termina en <b data-lf-cd>--:--:--</b></span>
+  </p>
+  {%- if welcome -%}
+    <div class="lf-offer__row lf-offer__row--main" data-lf-hw-only>
+      <span class="lf-offer__tag">-{{ bs.welcome_pct }}% HALLOWEEN</span>
+      <span class="lf-offer__txt">Tu precio hoy: <strong class="lf-offer__w">{{ w_price | money }}</strong></span>
+    </div>
+    <p class="lf-offer__note" data-lf-hw-only>Código <b>{{ bs.hw_code }}</b> ya activado: se aplica solo en el carrito, no tienes que copiar nada.</p>
+  {%- endif -%}
+  {%- if bs.show_duo -%}
+    <div class="lf-offer__row lf-offer__row--duo">
+      <span class="lf-offer__tag lf-offer__tag--alt">-{{ bs.duo_pct }}% x2</span>
+      <span class="lf-offer__txt">Llévate 2 prendas y paga <strong class="lf-offer__d">{{ d_price | money }}</strong> cada una</span>
+    </div>
+    {%- if bs.more_tiers != blank -%}<p class="lf-offer__note">{{ bs.more_tiers }}</p>{%- endif -%}
+  {%- endif -%}
+</div>
+<script>
+  (function () {
+    var box = document.currentScript && document.currentScript.previousElementSibling;
+    if (!box || !box.classList.contains('lf-offer') || box.dataset.ready) return;
+    box.dataset.ready = '1';
+    var fmt = {{ shop.money_format | json }};
+    function money(cents) {
+      var n = (cents / 100).toFixed(2);
+      var parts = n.split('.');
+      var intp = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      var withComma = intp + ',' + parts[1];
+      var withDot = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
+      return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, k) {
+        if (k === 'amount_with_comma_separator') return withComma;
+        if (k === 'amount_no_decimals') return parts[0];
+        if (k === 'amount_no_decimals_with_comma_separator') return intp;
+        return withDot;
+      });
+    }
+    document.addEventListener('variant:update', function (e) {
+      var variant = e.detail && e.detail.resource;
+      if (!variant || typeof variant.price !== 'number') return;
+      var w = box.querySelector('.lf-offer__w');
+      var d = box.querySelector('.lf-offer__d');
+      if (w) w.textContent = money(Math.round(variant.price * parseFloat(box.dataset.w)));
+      if (d) d.textContent = money(Math.round(variant.price * parseFloat(box.dataset.d)));
+    });
+  })();
+</script>
+{%- endif -%}
+<style>
+  .lf-offer{display:grid;gap:8px;margin:6px 0 2px;padding:12px 14px;border:1px solid rgba(232,119,46,.6);border-radius:10px;background:radial-gradient(120% 120% at 50% 0%,#2f2236 0%,#1a1320 70%);color:#fbf3ec}
+  .lf-offer__head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:0 0 2px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#f6c26b}
+  .lf-offer__cd{letter-spacing:.06em;color:#e4d8dc}
+  .lf-offer__cd b{display:inline-block;margin-left:4px;padding:2px 8px;border-radius:999px;background:#e8772e;color:#1a1320;font-variant-numeric:tabular-nums}
+  .lf-offer__row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;line-height:1.35;color:#fbf3ec}
+  .lf-offer__row--main .lf-offer__txt{font-size:16px}
+  .lf-offer__row strong{color:#f08a45;font-weight:700}
+  .lf-offer__tag{flex:0 0 auto;background:#e8772e;color:#1a1320;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 8px;border-radius:999px}
+  .lf-offer__tag--alt{background:#fbe4d2;color:#1a1320}
+  .lf-offer__note{margin:-2px 0 2px;font-size:12px;color:#c9bcc2}
+  .lf-offer__note b{color:#f6c26b}
+</style>
+{% schema %}
+{
+  "name": "LF · Precio con descuento",
+  "settings": [
+    { "type": "checkbox", "id": "show_welcome", "label": "Mostrar precio con código de Halloween", "default": true },
+    { "type": "text", "id": "hw_code", "label": "Código automático", "default": "HALLOWEEN10" },
+    { "type": "number", "id": "welcome_pct", "label": "% del código", "default": 10 },
+    { "type": "checkbox", "id": "show_duo", "label": "Mostrar oferta de 2 prendas", "default": true },
+    { "type": "number", "id": "duo_pct", "label": "% al comprar 2 prendas", "default": 15 },
+    { "type": "text", "id": "more_tiers", "label": "Más tramos (texto)", "default": "3 prendas: -20% · 4 o más: -25%" }
+  ],
+  "presets": [{ "name": "LF · Precio con descuento", "category": "Product" }]
+}
+{% endschema %}

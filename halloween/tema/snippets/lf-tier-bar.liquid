@@ -1,0 +1,98 @@
+{%- comment -%}
+  Barra de progreso del descuento por cantidad (carrito), con formato de Halloween.
+  - tiers: tramos "prendas:porcentaje" separados por comas, de menor a mayor.
+    Ej.: '2:15,3:20,4:25'. Deben coincidir con los descuentos automáticos de
+    Shopify → Descuentos (la barra solo informa; el descuento lo aplica Shopify).
+  El ahorro que se muestra es el real del carrito (todos los descuentos aplicados).
+  La cuenta atrás la rellena snippets/lf-halloween.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign tier_list = tiers | split: ','
+  assign n_tiers = tier_list.size
+  assign count = cart.item_count
+  assign reached = -1
+  assign next_qty = 0
+  assign next_pct = 0
+  assign cur_pct = 0
+  for t in tier_list
+    assign parts = t | split: ':'
+    assign q = parts[0] | strip | plus: 0
+    if count >= q
+      assign reached = forloop.index0
+      assign cur_pct = parts[1] | strip
+    elsif next_qty == 0
+      assign next_qty = q
+      assign next_pct = parts[1] | strip
+    endif
+  endfor
+
+  comment
+    Relleno: cada tramo ocupa el mismo espacio; entre dos tramos avanza en proporción.
+  endcomment
+  assign step = 100.0 | divided_by: n_tiers
+  if reached == -1
+    assign prev_q = 0
+    assign prev_pos = 0
+  else
+    assign prev_parts = tier_list[reached] | split: ':'
+    assign prev_q = prev_parts[0] | strip | plus: 0
+    assign prev_pos = reached | plus: 1 | times: step
+  endif
+  if next_qty > 0
+    assign span = next_qty | minus: prev_q
+    assign frac = count | minus: prev_q | times: 1.0 | divided_by: span
+    assign fill = frac | times: step | plus: prev_pos
+    assign missing = next_qty | minus: count
+  else
+    assign fill = 100
+  endif
+  assign saved = cart.original_total_price | minus: cart.total_price
+-%}
+{%- if count > 0 and n_tiers > 0 -%}
+<div class="lf-tier" role="group" aria-label="Descuentos de Halloween por cantidad">
+  <p class="lf-tier__head">
+    <span><span aria-hidden="true">🎃</span> Descuentos de Halloween</span>
+    <span class="lf-tier__cd" data-lf-hw-only>Terminan en <b data-lf-cd>--:--:--</b></span>
+  </p>
+  <p class="lf-tier__msg">
+    {%- if next_qty > 0 -%}
+      Añade <strong>{{ missing }} {% if missing == 1 %}prenda{% else %}prendas{% endif %} más</strong> y ahorra un <strong>{{ next_pct }}%</strong> en todo el pedido
+    {%- else -%}
+      ¡Trato hecho! Tienes el <strong>máximo descuento: -{{ cur_pct }}%</strong>
+    {%- endif -%}
+  </p>
+  <div class="lf-tier__bar">
+    <div class="lf-tier__fill" style="width:{{ fill | at_most: 100 | round: 1 }}%"></div>
+    {%- for t in tier_list -%}
+      {%- assign parts = t | split: ':' -%}
+      {%- assign q = parts[0] | strip | plus: 0 -%}
+      {%- assign pos = forloop.index | times: step -%}
+      <span class="lf-tier__node{% if count >= q %} is-on{% endif %}" style="left:{{ pos }}%">
+        <span class="lf-tier__dot" aria-hidden="true">{% if count >= q %}🎃{% endif %}</span>
+        <span class="lf-tier__lbl"><b>-{{ parts[1] | strip }}%</b>{{ q }}{% if forloop.last %}+{% endif %} prendas</span>
+      </span>
+    {%- endfor -%}
+  </div>
+  {%- if saved > 0 -%}
+    <p class="lf-tier__saved">Estás ahorrando <strong>{{ saved | money }}</strong></p>
+  {%- endif -%}
+</div>
+{%- endif -%}
+
+{% stylesheet %}
+  .lf-tier{width:100%;box-sizing:border-box;margin:0;padding:12px 16px 12px;border:1px solid rgba(232,119,46,.55);border-radius:12px;background:radial-gradient(120% 120% at 50% 0%,#2f2236 0%,#1a1320 70%);color:#fbf3ec}
+  .lf-tier__head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#f6c26b}
+  .lf-tier__cd{letter-spacing:.06em;color:#e4d8dc}
+  .lf-tier__cd b{display:inline-block;margin-left:4px;padding:2px 8px;border-radius:999px;background:#e8772e;color:#1a1320;font-variant-numeric:tabular-nums}
+  .lf-tier__msg{margin:0 0 14px;font-size:14px;line-height:1.4;text-align:center;color:#fbf3ec}
+  .lf-tier__msg strong{color:#e8772e}
+  .lf-tier__bar{position:relative;height:6px;margin:0 30px 48px 4px;border-radius:999px;background:rgba(255,255,255,.18)}
+  .lf-tier__fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#f6c26b,#e8772e);box-shadow:0 0 10px rgba(232,119,46,.6);transition:width .4s ease}
+  .lf-tier__node{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+  .lf-tier__dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1a1320;border:2px solid rgba(255,255,255,.3);font-size:12px;line-height:1}
+  .lf-tier__node.is-on .lf-tier__dot{background:#fbe4d2;border-color:#e8772e}
+  .lf-tier__lbl{position:absolute;top:26px;display:flex;flex-direction:column;align-items:center;font-size:11px;line-height:1.25;color:#c9bcc2;white-space:nowrap}
+  .lf-tier__lbl b{font-size:12px;color:#fff}
+  .lf-tier__node.is-on .lf-tier__lbl b{color:#e8772e}
+  .lf-tier__saved{margin:0;font-size:13px;text-align:center;color:#9fe0ac}
+{% endstylesheet %}

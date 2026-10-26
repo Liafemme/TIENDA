@@ -1,0 +1,51 @@
+{%- comment -%}
+  Campaña de Halloween: colores compartidos y cuenta atrás.
+  - Fecha de fin: LF_HW_END (31 de octubre a medianoche, hora de España).
+    Debe coincidir con la fecha de fin del código HALLOWEEN10 en Shopify → Descuentos.
+  - Cualquier elemento con [data-lf-cd] muestra la cuenta atrás:
+      · con hijos [data-u="d|h|m|s"] rellena cada casilla;
+      · sin hijos, escribe "3d 04:12:09".
+    Elementos que se añaden después (carrito, popup) se actualizan solos.
+  - Al terminar, se ocultan los contenedores [data-lf-hw-only].
+  Se renderiza una vez desde layout/theme.liquid.
+{%- endcomment -%}
+<style>
+  :root{--hw-night:#1a1320;--hw-night-2:#2a1f30;--hw-pumpkin:#e8772e;--hw-pumpkin-soft:#fbe4d2;--hw-candle:#f6c26b;--hw-text:#fbf3ec}
+  .lf-hw-cd{display:inline-flex;gap:6px;align-items:flex-start;font-variant-numeric:tabular-nums}
+  .lf-hw-cd__u{display:flex;flex-direction:column;align-items:center;min-width:46px;padding:7px 4px 5px;border-radius:8px;background:rgba(26,19,32,.78);border:1px solid rgba(232,119,46,.55);color:#fff;backdrop-filter:blur(4px)}
+  .lf-hw-cd__u b{font-size:20px;line-height:1;font-weight:600;letter-spacing:.02em}
+  .lf-hw-cd__u small{margin-top:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--hw-candle)}
+  .lf-hw-cd__sep{align-self:center;color:var(--hw-pumpkin);font-weight:700;margin-top:-10px}
+  @media(min-width:750px){.lf-hw-cd__u{min-width:58px;padding:9px 6px 6px}.lf-hw-cd__u b{font-size:26px}}
+  .lf-hw-ended [data-lf-hw-only]{display:none!important}
+</style>
+<script>
+  (function () {
+    // 31/10/2026 a las 24:00 (hora peninsular, CET +01:00)
+    var END = new Date('2026-11-01T00:00:00+01:00').getTime();
+    window.LF_HW_END = END;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function tick() {
+      var left = Math.max(0, END - Date.now());
+      if (left === 0) document.documentElement.classList.add('lf-hw-ended');
+      var s = Math.floor(left / 1000);
+      var d = Math.floor(s / 86400); s -= d * 86400;
+      var h = Math.floor(s / 3600); s -= h * 3600;
+      var m = Math.floor(s / 60); s -= m * 60;
+      var vals = { d: String(d), h: pad(h), m: pad(m), s: pad(s) };
+      var els = document.querySelectorAll('[data-lf-cd]');
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        var units = el.querySelectorAll('[data-u]');
+        if (units.length) {
+          for (var j = 0; j < units.length; j++) units[j].textContent = vals[units[j].getAttribute('data-u')];
+        } else {
+          el.textContent = (d > 0 ? d + 'd ' : '') + vals.h + ':' + vals.m + ':' + vals.s;
+        }
+      }
+    }
+    tick();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick);
+    setInterval(tick, 1000);
+  })();
+</script>

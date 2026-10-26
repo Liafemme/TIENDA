@@ -1,0 +1,23 @@
+{%- comment -%}
+  Línea pequeña bajo el precio de las tarjetas de producto con el precio final del código de Halloween.
+  Uso: {% render 'lf-card-offer', p: product %}
+  Debe coincidir con el descuento HALLOWEEN10 (10%) y el descuento por cantidad (2 prendas -15%) de Shopify.
+{%- endcomment -%}
+{%- liquid
+  assign welcome = true
+  if customer and customer.orders_count > 0
+    assign welcome = false
+  endif
+  assign cents = p.price
+-%}
+{%- if p and p.available -%}
+  {%- if welcome -%}
+    <p class="lf-cardoff" data-lf-hw-only><span aria-hidden="true">🎃</span> Halloween -10%: <strong>{{ cents | times: 0.9 | round | money }}</strong></p>
+  {%- else -%}
+    <p class="lf-cardoff"><span aria-hidden="true">🎃</span> Llévate 2: <strong>-15%</strong></p>
+  {%- endif -%}
+  <style>
+    .lf-cardoff{margin:4px 0 0;font-size:12px;line-height:1.3;color:#4a433d}
+    .lf-cardoff strong{color:#b0480f;font-weight:700}
+  </style>
+{%- endif -%}
