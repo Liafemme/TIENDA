@@ -1,0 +1,192 @@
+{
+  "sections": {
+    "ticker": {
+      "type": "lf-liq-ticker",
+      "settings": {
+        "text": "Liquidación de Halloween 🎃",
+        "ends": "Termina en:"
+      }
+    },
+    "hero": {
+      "type": "lf-liq-hero",
+      "blocks": {
+        "tier2": { "type": "tier", "settings": { "label": "2 prendas", "pct": 15 } },
+        "tier3": { "type": "tier", "settings": { "label": "3 prendas", "pct": 20 } },
+        "tier4": { "type": "tier", "settings": { "label": "4 o más", "pct": 25 } }
+      },
+      "block_order": ["tier2", "tier3", "tier4"],
+      "settings": {
+        "eyebrow": "🎃 Solo hasta el 31 de octubre · Envío gratis",
+        "heading": "Liquidación de Halloween",
+        "ends": "La liquidación termina en",
+        "intro": "<p>Liquidamos la colección de otoño: <strong>vestidos y conjuntos</strong> elegantes y cómodos a <strong>mitad de precio</strong>. Y además, con <strong>descuentos acumulables</strong>: cuantas más prendas te lleves, menos pagas por cada una.</p>",
+        "tiers_heading": "Cuantas más prendas, más ahorras",
+        "note_stock": "<strong>Unidades limitadas.</strong> Si el botón «Añadir al carrito» está activo, tu talla aún está disponible. Cuando se agote, no repondremos.",
+        "note_checkout": "<strong>No necesitas código:</strong> el descuento extra se aplica solo en el carrito y en la caja.",
+        "cta": "Ver los [n] modelos"
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": false,
+            "filter_style": "horizontal",
+            "filter_width": "centered",
+            "text_label_case": "default",
+            "show_swatch_label": false,
+            "show_filter_label": false,
+            "enable_sorting": false,
+            "enable_grid_density": false,
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "facets_margin_bottom": 0,
+            "facets_margin_right": 20
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "portrait",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "title": {
+              "type": "product-title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "paragraph",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "save": {
+              "type": "lf-card-save",
+              "settings": {
+                "text": "Ahorras",
+                "hint": ""
+              }
+            }
+          },
+          "block_order": ["card-gallery", "title", "price", "save"]
+        }
+      },
+      "settings": {
+        "layout_type": "grid",
+        "product_card_size": "medium",
+        "mobile_product_card_size": "small",
+        "enable_infinite_scroll": true,
+        "products_per_page": 24,
+        "product_grid_width": "centered",
+        "full_width_on_mobile": true,
+        "columns_gap_horizontal": 12,
+        "columns_gap_vertical": 32,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 24,
+        "padding-block-end": 40
+      }
+    },
+    "guarantees": {
+      "type": "lf-guarantee",
+      "blocks": {
+        "g1": { "type": "item", "settings": { "icon": "truck", "title": "Envío gratis con seguimiento", "text": "Preparamos tu pedido en 1-3 días laborables y te enviamos el número de seguimiento para que sepas en todo momento dónde está." } },
+        "g2": { "type": "item", "settings": { "icon": "lock", "title": "Pago 100% seguro", "text": "Tarjeta, Apple Pay y Google Pay con cifrado SSL. Nunca vemos ni guardamos los datos de tu tarjeta." } },
+        "g3": { "type": "item", "settings": { "icon": "return", "title": "30 días para devolverlo", "text": "Si algo no te convence, tienes 30 días desde que lo recibes para devolverlo, sin dar explicaciones." } }
+      },
+      "block_order": ["g1", "g2", "g3"],
+      "settings": {
+        "eyebrow": "Compra sin riesgo",
+        "heading": "Por qué comprar en Lia Femme"
+      }
+    },
+    "faq": {
+      "type": "lf-faq",
+      "blocks": {
+        "q1": { "type": "qa", "settings": { "q": "¿Cómo se aplican los descuentos por cantidad?", "a": "<p>Solos. Añade 2 prendas al carrito y verás un -15% extra; con 3, un -20%; con 4 o más, un -25%. Se aplican sobre el precio ya rebajado de la liquidación y no necesitas ningún código.</p>" } },
+        "q2": { "type": "qa", "settings": { "q": "¿Hasta cuándo dura la liquidación?", "a": "<p>Hasta el 31 de octubre a medianoche (hora peninsular) o hasta agotar existencias. Las unidades de cada talla son limitadas y no se reponen.</p>" } },
+        "q3": { "type": "qa", "settings": { "q": "¿Cuánto tarda el envío?", "a": "<p>El envío es gratis y con seguimiento. Preparamos tu pedido en 1-3 días laborables y la entrega en España y la UE tarda normalmente 7-14 días laborables.</p>" } },
+        "q4": { "type": "qa", "settings": { "q": "¿Y si no me queda bien?", "a": "<p>Tienes 30 días naturales desde que recibes el pedido para devolverlo. Escríbenos y te explicamos cómo hacerlo.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4"],
+      "settings": {
+        "eyebrow": "Ayuda",
+        "heading": "Preguntas frecuentes",
+        "contact": "¿Más dudas? Escríbenos a <a href=\"mailto:liafemme23@gmail.com\">liafemme23@gmail.com</a> y te respondemos en menos de 24 h."
+      }
+    }
+  },
+  "order": ["ticker", "hero", "main", "guarantees", "faq"]
+}

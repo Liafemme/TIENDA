@@ -1,0 +1,26 @@
+{%- comment -%}
+  Línea de ahorro bajo el precio en las tarjetas de producto: "AHORRAS 60,00 €".
+{%- endcomment -%}
+{%- assign p = closest.product -%}
+{%- if p.compare_at_price > p.price -%}
+  <div class="lf-csave" {{ block.shopify_attributes }}>
+    <span class="lf-csave__tag">{{ block.settings.text | escape }} {{ p.compare_at_price | minus: p.price | money }}</span>
+    {%- if block.settings.hint != blank -%}<span class="lf-csave__hint">{{ block.settings.hint | escape }}</span>{%- endif -%}
+  </div>
+{%- endif -%}
+<style>
+  .lf-csave{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:2px}
+  .lf-csave__tag{display:inline-block;padding:3px 8px;border-radius:4px;background:#1a1320;color:#f6c26b;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .lf-csave__hint{font-size:12px;line-height:1.3;color:#b0480f;font-weight:600}
+</style>
+{% schema %}
+{
+  "name": "LF · Ahorro",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "text", "label": "Texto", "default": "Ahorras" },
+    { "type": "text", "id": "hint", "label": "Texto secundario", "default": "🎃 Llévate 2 y ahorra un 15% extra" }
+  ],
+  "presets": [{ "name": "LF · Ahorro" }]
+}
+{% endschema %}

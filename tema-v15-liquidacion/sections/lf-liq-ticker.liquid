@@ -1,0 +1,39 @@
+{%- comment -%}
+  Cinta animada de urgencia para la colección de liquidación.
+  "LIQUIDACIÓN DE HALLOWEEN 🎃 • TERMINA EN: 1d 07h 12m 03s" repetido en bucle.
+  La cuenta atrás la rellena snippets/lf-halloween.liquid ([data-lf-cd] con [data-u]).
+{%- endcomment -%}
+{%- capture item -%}
+  <span class="lf-liqt__item">
+    <span>{{ section.settings.text | escape }}</span>
+    <span class="lf-liqt__dot" aria-hidden="true">•</span>
+    <span>{{ section.settings.ends | escape }}</span>
+    <span class="lf-liqt__cd" data-lf-cd><b data-u="d">0</b>d <b data-u="h">00</b>h <b data-u="m">00</b>m <b data-u="s">00</b>s</span>
+  </span>
+{%- endcapture -%}
+<div class="lf-liqt" data-lf-hw-only role="marquee" aria-label="{{ section.settings.text | escape }}">
+  <div class="lf-liqt__track">
+    {%- for i in (1..8) -%}{{ item }}{%- endfor -%}
+  </div>
+</div>
+<style>
+  .lf-liqt{background:#e8772e;color:#1a1320;overflow:hidden;white-space:nowrap;border-block:1px solid #1a1320}
+  .lf-liqt__track{display:inline-flex;animation:lfLiqT 32s linear infinite;will-change:transform}
+  .lf-liqt__item{display:inline-flex;align-items:center;gap:10px;padding:11px 26px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .lf-liqt__dot{opacity:.6}
+  .lf-liqt__cd{font-variant-numeric:tabular-nums}
+  .lf-liqt__cd b{font-weight:800}
+  @keyframes lfLiqT{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.lf-liqt__track{animation:none}}
+  @media(max-width:749px){.lf-liqt__item{font-size:11px;padding:9px 18px;gap:8px}}
+</style>
+{% schema %}
+{
+  "name": "LF · Cinta liquidación",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Texto", "default": "Liquidación de Halloween 🎃" },
+    { "type": "text", "id": "ends", "label": "Texto antes de la cuenta atrás", "default": "Termina en:" }
+  ],
+  "presets": [{ "name": "LF · Cinta liquidación" }]
+}
+{% endschema %}

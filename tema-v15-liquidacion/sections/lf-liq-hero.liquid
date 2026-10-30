@@ -1,0 +1,141 @@
+{%- comment -%}
+  Cabecera de la colección de liquidación: banner con cuenta atrás + bloque de descuentos por cantidad.
+  Los tramos (bloques "Tramo") deben coincidir con los descuentos automáticos de Shopify → Descuentos.
+  El precio por prenda de cada tramo se calcula con el precio del primer producto de la colección.
+{%- endcomment -%}
+{%- liquid
+  assign base = collection.products.first.price
+  assign compare = collection.products.first.compare_at_price
+  assign off = 0
+  if compare > base
+    assign off = compare | minus: base | times: 100 | divided_by: compare
+  endif
+  assign count = collection.products_count
+-%}
+<section class="lf-liqh">
+  <div class="lf-liqh__banner">
+    <div class="lf-liqh__media{% if section.settings.image == blank %} lf-liqh__media--collage{% endif %}">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600,900,1200,1600,2000', sizes: '100vw', alt: collection.title }}
+      {%- else -%}
+        {%- for p in collection.products limit: 3 -%}
+          {%- if p.featured_image -%}
+            {{ p.featured_image | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', sizes: '(min-width: 750px) 34vw, 50vw', alt: '' }}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+    <div class="lf-liqh__overlay">
+      {%- if section.settings.eyebrow != blank -%}<p class="lf-liqh__eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h1 class="lf-liqh__title">{{ section.settings.heading | default: collection.title | escape }}</h1>
+      {%- if off > 0 -%}
+        <p class="lf-liqh__sub">Todo a <strong>-{{ off }}%</strong> + descuentos acumulables</p>
+      {%- endif -%}
+      <div data-lf-hw-only>
+        <p class="lf-liqh__ends">{{ section.settings.ends | escape }}</p>
+        {% render 'lf-hw-countdown' %}
+      </div>
+    </div>
+  </div>
+
+  <div class="lf-liqh__info">
+    {%- if section.settings.intro != blank -%}
+      <div class="lf-liqh__intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="lf-liqh__tiers">
+        <p class="lf-liqh__tiers-h">{{ section.settings.tiers_heading | escape }}</p>
+        <ul>
+          {%- for block in section.blocks -%}
+            {%- assign each = base | times: block.settings.pct | divided_by: 100.0 | round -%}
+            {%- assign each = base | minus: each -%}
+            <li class="lf-liqh__tier{% if forloop.last %} is-best{% endif %}" {{ block.shopify_attributes }}>
+              <span class="lf-liqh__qty">{{ block.settings.label | escape }}</span>
+              <span class="lf-liqh__pct">-{{ block.settings.pct }}% EXTRA</span>
+              {%- if base > 0 -%}<span class="lf-liqh__each">{{ each | money }}/prenda</span>{%- endif -%}
+              {%- if forloop.last -%}<span class="lf-liqh__flag">Mejor precio</span>{%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    <ul class="lf-liqh__notes">
+      {%- if section.settings.note_stock != blank -%}
+        <li><span class="lf-liqh__ic" aria-hidden="true">⚠️</span><span>{{ section.settings.note_stock }}</span></li>
+      {%- endif -%}
+      {%- if section.settings.note_checkout != blank -%}
+        <li><span class="lf-liqh__ic" aria-hidden="true">✅</span><span>{{ section.settings.note_checkout }}</span></li>
+      {%- endif -%}
+    </ul>
+
+    {%- if section.settings.cta != blank -%}
+      <a class="lf-btn lf-liqh__cta" href="#ResultsList">{{ section.settings.cta | replace: '[n]', count | escape }} ↓</a>
+    {%- endif -%}
+  </div>
+</section>
+<style>
+  .lf-liqh{background:var(--lf-bg)}
+  .lf-liqh__banner{position:relative;min-height:440px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:#1a1320}
+  .lf-liqh__media{position:absolute;inset:0}
+  .lf-liqh__media img{width:100%;height:100%;object-fit:cover;display:block}
+  .lf-liqh__media--collage{display:grid;grid-template-columns:repeat(3,1fr)}
+  .lf-liqh__media--collage img{object-position:center 20%}
+  @media(max-width:749px){.lf-liqh__media--collage{grid-template-columns:repeat(2,1fr)}.lf-liqh__media--collage img:nth-child(3){display:none}}
+  .lf-liqh__overlay{position:relative;z-index:1;width:100%;padding:90px 16px 32px;text-align:center;color:#fbf3ec;background:linear-gradient(to top,rgba(26,19,32,.95) 0%,rgba(26,19,32,.7) 55%,rgba(26,19,32,0) 100%)}
+  .lf-liqh__eyebrow{margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#f6c26b}
+  .lf-liqh__title{margin:0 0 8px;font-family:var(--font-heading--family);font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.02;text-transform:uppercase;letter-spacing:.01em;color:#fff}
+  .lf-liqh__sub{margin:0 0 18px;font-size:15px}
+  .lf-liqh__sub strong{color:#e8772e;font-size:1.25em}
+  .lf-liqh__ends{margin:0 0 8px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
+  @media(min-width:750px){.lf-liqh__banner{min-height:520px}.lf-liqh__overlay{padding:120px 24px 44px}}
+
+  .lf-liqh__info{max-width:720px;margin:0 auto;padding:28px 16px 8px;text-align:center}
+  .lf-liqh__intro{font-size:15px;line-height:1.65;color:var(--lf-ink)}
+  .lf-liqh__intro p{margin:0 0 10px}
+  .lf-liqh__tiers{margin:18px 0 6px;padding:18px 14px;border:2px dashed #e8772e;border-radius:10px;background:#fff}
+  .lf-liqh__tiers-h{margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+  .lf-liqh__tiers ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+  .lf-liqh__tier{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-areas:"qty pct" "each each";align-items:center;gap:2px 10px;padding:11px 14px;border-radius:8px;background:var(--lf-soft);text-align:left}
+  .lf-liqh__qty{grid-area:qty;font-size:14px;font-weight:600}
+  .lf-liqh__pct{grid-area:pct;font-size:16px;font-weight:800;color:#b0480f}
+  .lf-liqh__each{grid-area:each;font-size:12px;color:var(--lf-muted)}
+  .lf-liqh__tier.is-best{background:#1a1320;color:#fbf3ec}
+  .lf-liqh__tier.is-best .lf-liqh__pct{color:#e8772e}
+  .lf-liqh__tier.is-best .lf-liqh__each{color:#f6c26b}
+  .lf-liqh__flag{position:absolute;top:-9px;right:12px;padding:2px 8px;border-radius:999px;background:#e8772e;color:#1a1320;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  @media(min-width:750px){.lf-liqh__tiers ul{grid-template-columns:repeat({{ section.blocks.size | at_least: 1 }},1fr)}.lf-liqh__tier{grid-template-columns:1fr;grid-template-areas:"qty" "pct" "each";text-align:center;padding:16px 10px}}
+  .lf-liqh__notes{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;text-align:left}
+  .lf-liqh__notes li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid var(--lf-line);font-size:13px;line-height:1.5}
+  .lf-liqh__ic{flex:0 0 auto;line-height:1.4}
+  .lf-liqh__cta{margin-top:20px;width:100%;max-width:360px}
+</style>
+{% schema %}
+{
+  "name": "LF · Cabecera liquidación",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Imagen del banner", "info": "Si la dejas vacía se muestra un collage con las 3 primeras prendas de la colección." },
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "🎃 Solo hasta el 31 de octubre" },
+    { "type": "text", "id": "heading", "label": "Título", "info": "Vacío = nombre de la colección" },
+    { "type": "text", "id": "ends", "label": "Texto sobre la cuenta atrás", "default": "La liquidación termina en" },
+    { "type": "richtext", "id": "intro", "label": "Texto de introducción" },
+    { "type": "text", "id": "tiers_heading", "label": "Título de los tramos", "default": "Cuantas más prendas, más ahorras" },
+    { "type": "inline_richtext", "id": "note_stock", "label": "Aviso de stock" },
+    { "type": "inline_richtext", "id": "note_checkout", "label": "Aviso de descuento en caja" },
+    { "type": "text", "id": "cta", "label": "Botón (usa [n] para el nº de prendas)", "default": "Ver los [n] modelos" }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Tramo",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Cantidad", "default": "2 prendas" },
+        { "type": "range", "id": "pct", "label": "Descuento extra", "min": 5, "max": 50, "step": 5, "unit": "%", "default": 15 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "LF · Cabecera liquidación" }]
+}
+{% endschema %}
