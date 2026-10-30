@@ -17,7 +17,7 @@ https://liafemme.com/collections/liquidacion-de-halloween?view=liquidacion-hallo
 8. Preguntas frecuentes.
 
 ## Otros cambios en v15
-- `blocks/_product-card-gallery.liquid`: la etiqueta de oferta muestra el porcentaje ("-50%") en vez de "Oferta" en toda la tienda.
+- `blocks/_product-card-gallery.liquid`: la etiqueta "-50%" sale **solo** en la colección de liquidación (plantilla `liquidacion-halloween`). En el resto de la tienda sigue diciendo "Oferta", como antes.
 - `blocks/_product-card.liquid`: admite el bloque nuevo `lf-card-save`.
 
 ## Para publicar
