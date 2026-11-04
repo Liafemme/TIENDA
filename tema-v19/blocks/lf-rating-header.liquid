@@ -1,12 +1,13 @@
 {%- comment -%}
   Cabecera de la ficha de producto (encima del título, debajo de la foto en móvil):
-  1) Valoración ESTÁTICA e ILUSTRATIVA: ★★★★★ 4,5/5 + etiqueta "Valoración ilustrativa".
+  1) Valoración ESTÁTICA e ILUSTRATIVA: ★★★★★ 4,7/5 + etiqueta "Valoración ilustrativa".
      No depende de apps, CSV ni metacampos: aparece siempre, en todos los productos
      (actuales y futuros) que usen una plantilla con este bloque.
+     Mismo tamaño y tipografía que la línea de confianza, en verde.
   2) Línea de confianza opcional (sin valoraciones), mismo estilo.
 {%- endcomment -%}
 {%- liquid
-  assign rating_5 = block.settings.rating | default: 4.5 | times: 1.0
+  assign rating_5 = block.settings.rating | default: 4.7 | times: 1.0
   assign rating_txt = rating_5 | round: 1 | append: '' | replace: '.', ','
   assign rating_txt_short = rating_txt | remove: ',0'
   assign note = block.settings.note | strip
@@ -31,8 +32,7 @@
       </span>
     {%- endfor -%}
   </span>
-  <span class="lf-rh__score" aria-hidden="true">{{ rating_txt_short }}/5</span>
-  <span class="lf-rh__note">{{ note }}</span>
+  <span class="lf-rh__txt lf-rh__score"><span aria-hidden="true">{{ rating_txt_short }}/5</span> · {{ note }}</span>
 </div>
 
 {%- if block.settings.show_trust and block.settings.trust_text != blank -%}
@@ -53,15 +53,11 @@
   .lf-rh__box{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:linear-gradient(90deg,#1e1a17 var(--lf-rh-fill),#dcdcdc var(--lf-rh-fill))}
   .lf-rh__box svg{width:14px;height:14px;fill:#fff}
   .lf-rh--trust .lf-rh__box svg{fill:none}
-  .lf-rh--static{gap:6px 14px}
-  .lf-rh--static .lf-rh__stars{gap:3px}
-  .lf-rh--static .lf-rh__box{width:26px;height:26px;background:linear-gradient(90deg,#00b67a var(--lf-rh-fill),#dcdcdc var(--lf-rh-fill))}
-  .lf-rh--static .lf-rh__box svg{width:20px;height:20px}
-  .lf-rh__score{font-size:20px;font-weight:700;line-height:1;color:#1e1a17;letter-spacing:.01em}
-  .lf-rh__note{flex-basis:100%;font-size:12px;line-height:1.3;color:#6f6660}
+  .lf-rh--static .lf-rh__box{background:linear-gradient(90deg,#00b67a var(--lf-rh-fill),#dcdcdc var(--lf-rh-fill))}
+  .lf-rh__score{white-space:nowrap}
   .lf-rh__txt{font-family:var(--font-heading--family,'Playfair Display'),serif;font-size:17px;line-height:1.2;color:#1e1a17;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
   a.lf-rh__txt:hover{opacity:.75}
-  @media (max-width:749px){.lf-rh{gap:16px;margin:0 0 18px}.lf-rh__box{width:21px;height:21px}.lf-rh__box svg{width:16px;height:16px}.lf-rh--static{gap:6px 12px}.lf-rh--static .lf-rh__box{width:26px;height:26px}.lf-rh--static .lf-rh__box svg{width:20px;height:20px}.lf-rh__score{font-size:20px}.lf-rh__txt{font-size:19px}.lf-rh--trust{gap:12px}.lf-rh--trust .lf-rh__txt{font-size:16px;white-space:nowrap}}
+  @media (max-width:749px){.lf-rh{gap:16px;margin:0 0 18px}.lf-rh__box{width:21px;height:21px}.lf-rh__box svg{width:16px;height:16px}.lf-rh--static{gap:12px}.lf-rh--static .lf-rh__txt{font-size:16px}.lf-rh__txt{font-size:19px}.lf-rh--trust{gap:12px}.lf-rh--trust .lf-rh__txt{font-size:16px;white-space:nowrap}}
 {% endstylesheet %}
 
 {% schema %}
@@ -69,7 +65,7 @@
   "name": "Valoración ilustrativa",
   "tag": null,
   "settings": [
-    { "type": "range", "id": "rating", "label": "Nota mostrada (sobre 5)", "min": 1, "max": 5, "step": 0.1, "default": 4.5 },
+    { "type": "range", "id": "rating", "label": "Nota mostrada (sobre 5)", "min": 1, "max": 5, "step": 0.1, "default": 4.7 },
     { "type": "text", "id": "note", "label": "Etiqueta", "default": "Valoración ilustrativa", "info": "Si la dejas vacía se muestra \"Valoración ilustrativa\"." },
     { "type": "checkbox", "id": "show_trust", "label": "Mostrar línea de confianza", "default": true },
     { "type": "text", "id": "trust_text", "label": "Texto de la línea de confianza", "default": "Envío gratis · 30 días para devolver" },

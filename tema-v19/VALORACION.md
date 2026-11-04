@@ -2,7 +2,8 @@
 
 Tema: "Lia Femme – v19 estrellas sobre el título (Claude)" (id 211870155083), sin publicar.
 
-Muestra ★★★★★ 4,5/5 (estrellas verdes) con la etiqueta "Valoración ilustrativa",
+Muestra ★★★★★ 4,7/5 · Valoración ilustrativa (estrellas verdes), con el mismo tamaño
+y tipografía que la línea "Envío gratis · 30 días para devolver",
 encima del título del producto (en móvil queda justo debajo de la foto).
 Es estática: no usa Judge.me, apps, CSV ni metacampos.
 
