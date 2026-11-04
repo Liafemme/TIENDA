@@ -1,22 +1,17 @@
 {%- comment -%}
   Cabecera de la ficha de producto (encima del título, debajo de la foto en móvil):
-  1) Valoración ESTÁTICA e ILUSTRATIVA: ★★★★★ 4,7/5 + etiqueta "Valoración ilustrativa".
-     No depende de apps, CSV ni metacampos: aparece siempre, en todos los productos
-     (actuales y futuros) que usen una plantilla con este bloque.
-     Mismo tamaño y tipografía que la línea de confianza, en verde.
-  2) Línea de confianza opcional (sin valoraciones), mismo estilo.
+  ★★★★★ 4,7 de 5 en 23 reseñas (cuadros negros + texto subrayado en Playfair).
+  Valores fijos, editables en el bloque (nota media y número de reseñas).
+  No depende de apps, CSV ni metacampos: aparece en todos los productos, actuales y futuros.
 {%- endcomment -%}
 {%- liquid
   assign rating_5 = block.settings.rating | default: 4.7 | times: 1.0
   assign rating_txt = rating_5 | round: 1 | append: '' | replace: '.', ','
   assign rating_txt_short = rating_txt | remove: ',0'
-  assign note = block.settings.note | strip
-  if note == blank
-    assign note = 'Valoración ilustrativa'
-  endif
+  assign count = block.settings.count | default: 23
 -%}
-<div class="lf-rh lf-rh--static" {{ block.shopify_attributes }}>
-  <span class="lf-rh__stars" role="img" aria-label="Valoración ilustrativa: {{ rating_txt_short }} de 5 estrellas">
+<div class="lf-rh" {{ block.shopify_attributes }}>
+  <span class="lf-rh__stars" role="img" aria-label="{{ rating_txt_short }} de 5 estrellas">
     {%- for i in (1..5) -%}
       {%- liquid
         assign prev = i | minus: 1
@@ -32,45 +27,26 @@
       </span>
     {%- endfor -%}
   </span>
-  <span class="lf-rh__txt lf-rh__score"><span aria-hidden="true">{{ rating_txt_short }}/5</span> · {{ note }}</span>
+  <span class="lf-rh__txt">{{ rating_txt_short }} de 5 en {{ count }} {% if count == 1 %}reseña{% else %}reseñas{% endif %}</span>
 </div>
-
-{%- if block.settings.show_trust and block.settings.trust_text != blank -%}
-  <div class="lf-rh lf-rh--trust">
-    <span class="lf-rh__stars" aria-hidden="true">
-      <span class="lf-rh__box" style="--lf-rh-fill:100%"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3v3h-7z"/><circle cx="6.5" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg></span>
-      <span class="lf-rh__box" style="--lf-rh-fill:100%"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5L4 9l4 4"/></svg></span>
-      <span class="lf-rh__box" style="--lf-rh-fill:100%"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
-    </span>
-    <a class="lf-rh__txt" href="{{ block.settings.trust_link | default: '/policies/shipping-policy' }}">{{ block.settings.trust_text }}</a>
-  </div>
-{%- endif -%}
 
 {% stylesheet %}
   .lf-rh{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin:0 0 20px}
-  .lf-rh + .lf-rh{margin-top:-8px}
   .lf-rh__stars{display:inline-flex;gap:2px;line-height:0;flex-shrink:0}
   .lf-rh__box{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:linear-gradient(90deg,#1e1a17 var(--lf-rh-fill),#dcdcdc var(--lf-rh-fill))}
   .lf-rh__box svg{width:14px;height:14px;fill:#fff}
-  .lf-rh--trust .lf-rh__box svg{fill:none}
-  .lf-rh--static .lf-rh__box{background:linear-gradient(90deg,#00b67a var(--lf-rh-fill),#dcdcdc var(--lf-rh-fill))}
-  .lf-rh__score{white-space:nowrap}
   .lf-rh__txt{font-family:var(--font-heading--family,'Playfair Display'),serif;font-size:17px;line-height:1.2;color:#1e1a17;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
-  a.lf-rh__txt:hover{opacity:.75}
-  @media (max-width:749px){.lf-rh{gap:16px;margin:0 0 18px}.lf-rh__box{width:21px;height:21px}.lf-rh__box svg{width:16px;height:16px}.lf-rh--static{gap:12px}.lf-rh--static .lf-rh__txt{font-size:16px}.lf-rh__txt{font-size:19px}.lf-rh--trust{gap:12px}.lf-rh--trust .lf-rh__txt{font-size:16px;white-space:nowrap}}
+  @media (max-width:749px){.lf-rh{gap:12px;margin:0 0 18px}.lf-rh__box{width:21px;height:21px}.lf-rh__box svg{width:16px;height:16px}.lf-rh__txt{font-size:16px}}
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Valoración ilustrativa",
+  "name": "Valoración",
   "tag": null,
   "settings": [
-    { "type": "range", "id": "rating", "label": "Nota mostrada (sobre 5)", "min": 1, "max": 5, "step": 0.1, "default": 4.7 },
-    { "type": "text", "id": "note", "label": "Etiqueta", "default": "Valoración ilustrativa", "info": "Si la dejas vacía se muestra \"Valoración ilustrativa\"." },
-    { "type": "checkbox", "id": "show_trust", "label": "Mostrar línea de confianza", "default": true },
-    { "type": "text", "id": "trust_text", "label": "Texto de la línea de confianza", "default": "Envío gratis · 30 días para devolver" },
-    { "type": "url", "id": "trust_link", "label": "Enlace", "info": "Si lo dejas vacío, enlaza a la política de envíos." }
+    { "type": "range", "id": "rating", "label": "Nota media (sobre 5)", "min": 1, "max": 5, "step": 0.1, "default": 4.7 },
+    { "type": "number", "id": "count", "label": "Número de reseñas", "default": 23, "info": "Actualízalo cuando recibas reseñas nuevas." }
   ],
-  "presets": [{ "name": "Valoración ilustrativa" }]
+  "presets": [{ "name": "Valoración" }]
 }
 {% endschema %}
