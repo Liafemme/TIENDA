@@ -1,0 +1,34 @@
+{%- comment -%}
+  Lia Femme · Estrellas de reseñas encima del título (estilo bloque compacto).
+  Usa SOLO las reseñas reales del producto (metacampos estándar reviews.rating
+  y reviews.rating_count, que rellenan Judge.me, Shopify Product Reviews, Loox, etc.).
+  Si el producto no tiene reseñas, no se muestra nada.
+
+  Instalación: Tienda online → Temas → Personalizar → plantilla de producto →
+  Añadir bloque "Liquid personalizado" justo ENCIMA del bloque "Título" y pegar esto.
+  "#resenas" debe apuntar a la sección de reseñas de la ficha (cámbialo si tu app usa otro id).
+{%- endcomment -%}
+{%- assign lf_rating = product.metafields.reviews.rating.value -%}
+{%- assign lf_count = product.metafields.reviews.rating_count | plus: 0 -%}
+{%- if lf_rating != blank and lf_count > 0 -%}
+  {%- assign lf_avg = lf_rating.rating | plus: 0 -%}
+  <a href="#resenas" class="lf-stars" aria-label="Valoración {{ lf_avg | round: 1 }} de 5, {{ lf_count }} reseñas">
+    <span class="lf-stars__row" aria-hidden="true">
+      {%- for i in (1..5) -%}
+        {%- assign lf_prev = i | minus: 1 -%}
+        {%- assign lf_fill = lf_avg | minus: lf_prev | times: 100 | at_least: 0 | at_most: 100 -%}
+        <span class="lf-stars__star" style="--fill: {{ lf_fill }}%">★</span>
+      {%- endfor -%}
+    </span>
+    <span class="lf-stars__text">
+      {{ lf_avg | round: 1 | replace: '.', ',' }} de 5 · {{ lf_count }} {% if lf_count == 1 %}reseña{% else %}reseñas{% endif %}
+    </span>
+  </a>
+  <style>
+    .lf-stars{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;text-decoration:none;color:#1E1A17}
+    .lf-stars__row{display:inline-flex;gap:2px}
+    .lf-stars__star{width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;
+      background:linear-gradient(90deg,#1E1A17 var(--fill),#dcd6cf var(--fill))}
+    .lf-stars__text{font-size:13px;font-weight:500;text-decoration:underline}
+  </style>
+{%- endif -%}
