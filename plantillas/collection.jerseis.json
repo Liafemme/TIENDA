@@ -3,7 +3,7 @@
     "ticker": {
       "type": "lf-liq-ticker",
       "settings": {
-        "text": "Jerséis de punto -75%: de 232,69 € a 57,95 € 🧶",
+        "text": "Jerséis de punto -50%: de 115,90 € a 57,95 € 🧶",
         "ends": "Hasta -25% extra comprando 2 o más · Envío gratis"
       }
     },
@@ -41,7 +41,7 @@
         "eyebrow": "🧶 Punto calentito para el invierno · Envío gratis",
         "heading": "Jerséis de punto",
         "ends": "",
-        "intro": "<p>Jerséis de punto con <strong>canesú jacquard, abetos, flores y rayas de colores</strong>: cálidos, suaves y con ese toque nórdico que alegra cualquier look de invierno. Ahora <strong>todos a 57,95 € (antes 232,69 €)</strong>. Y si te llevas más de uno, el descuento sigue subiendo.</p>",
+        "intro": "<p>Jerséis de punto con <strong>canesú jacquard, abetos, flores y rayas de colores</strong>: cálidos, suaves y con ese toque nórdico que alegra cualquier look de invierno. Ahora <strong>todos al -50%: a 57,95 € (antes 115,90 €)</strong>. Y si te llevas más de uno, el descuento sigue subiendo.</p>",
         "tiers_heading": "Cuantas más prendas, más ahorras",
         "unit": "prenda",
         "note_stock": "<strong>Unidades limitadas.</strong> Algunas tallas y colores tienen pocas unidades: si el botón «Añadir al carrito» está activo, aún queda.",
