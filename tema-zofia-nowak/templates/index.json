@@ -1,0 +1,392 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "lf-hero",
+      "settings": {
+        "collection": "otono-2026",
+        "show_brand": true,
+        "brand_text": "Zofia Nowak",
+        "brand_tagline": "Moda damska",
+        "brand_opacity": 30,
+        "brand_position": "top",
+        "halloween": false,
+        "show_countdown": true,
+        "countdown_label": "Dzisiejsza oferta kończy się za",
+        "eyebrow": "🖤 Wcześniejszy Black Friday",
+        "heading": "Wcześniejszy Black Friday: do -50%",
+        "text": "Nie czekaj do 27 listopada: sukienki i komplety już za pół ceny, -10% na pierwsze zakupy z kodem WITAJ10 (już aktywny) i do -25% przy zakupie 2 lub więcej produktów. Darmowa wysyłka.",
+        "btn1": "",
+        "link1": "shopify://collections/otono-2026",
+        "btn2": "Zobacz oferty",
+        "link2": "shopify://collections/ofertas-de-otono"
+      }
+    },
+    "trust": {
+      "type": "lf-trust-bar",
+      "blocks": {
+        "trust_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Darmowa wysyłka",
+            "text": "Z numerem śledzenia do całej Polski"
+          }
+        },
+        "trust_2": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30 dni",
+            "text": "Na wymiany i zwroty"
+          }
+        },
+        "trust_3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Bezpieczna płatność",
+            "text": "Karta, Apple Pay i Google Pay"
+          }
+        },
+        "trust_4": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "title": "Odpowiadamy w 24 h",
+            "text": "liafemme23@gmail.com"
+          }
+        }
+      },
+      "block_order": [
+        "trust_1",
+        "trust_2",
+        "trust_3",
+        "trust_4"
+      ],
+      "settings": {
+        "bg": "#f3ede5"
+      }
+    },
+    "cats": {
+      "type": "lf-categories",
+      "blocks": {
+        "cats_1": {
+          "type": "cat",
+          "settings": {
+            "collection": "vestidos",
+            "label": ""
+          }
+        },
+        "cats_2": {
+          "type": "cat",
+          "settings": {
+            "collection": "abrigos-y-jerseys",
+            "label": "Swetry i płaszcze"
+          }
+        },
+        "cats_3": {
+          "type": "cat",
+          "settings": {
+            "collection": "pantalones-y-conjuntos",
+            "label": "Komplety"
+          }
+        },
+        "cats_4": {
+          "type": "cat",
+          "settings": {
+            "collection": "mocasines",
+            "label": ""
+          }
+        },
+        "cats_5": {
+          "type": "cat",
+          "settings": {
+            "collection": "bolsos",
+            "label": "Torebki"
+          }
+        },
+        "cats_6": {
+          "type": "cat",
+          "settings": {
+            "collection": "moda-hombre",
+            "label": "Mężczyźni"
+          }
+        }
+      },
+      "block_order": [
+        "cats_1",
+        "cats_2",
+        "cats_3",
+        "cats_4",
+        "cats_5",
+        "cats_6"
+      ],
+      "settings": {
+        "eyebrow": "Odkryj",
+        "heading": "Kupuj według kategorii"
+      }
+    },
+    "best": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "lo-mas-deseado",
+        "eyebrow": "Ulubione",
+        "heading": "Bestsellery",
+        "text": "Ubrania, które w tym sezonie wybieracie najczęściej.",
+        "limit": 8,
+        "button": "Zobacz wszystkie bestsellery",
+        "bg": "#fbf8f4"
+      }
+    },
+    "story": {
+      "type": "lf-story",
+      "blocks": {
+        "story_1": {
+          "type": "point",
+          "settings": {
+            "text": "Darmowa wysyłka z numerem śledzenia do całej Polski"
+          }
+        },
+        "story_2": {
+          "type": "point",
+          "settings": {
+            "text": "30 dni na zmianę decyzji"
+          }
+        },
+        "story_3": {
+          "type": "point",
+          "settings": {
+            "text": "Przyjazna obsługa e-mailowa"
+          }
+        }
+      },
+      "block_order": [
+        "story_1",
+        "story_2",
+        "story_3"
+      ],
+      "settings": {
+        "collection": "vestidos",
+        "flip": false,
+        "eyebrow": "Zofia Nowak",
+        "heading": "Moda, w której czujesz się sobą",
+        "text": "<p>W sklepie Zofia Nowak wybieramy kobiece, wygodne i łatwe do łączenia ubrania, abyś czuła się dobrze od poniedziałku do weekendu.</p><p>Każdą rzecz wybieramy z myślą o przyjemnych tkaninach, twarzowych krojach i uczciwych cenach.</p>",
+        "button": "Odkryj kolekcję",
+        "link": "shopify://collections/moda-mujer"
+      }
+    },
+    "new": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "otono-2026",
+        "eyebrow": "Właśnie dotarło",
+        "heading": "Nowości w cenach Black Friday",
+        "text": "",
+        "limit": 8,
+        "button": "Zobacz wszystkie nowości",
+        "bg": "#f3ede5"
+      }
+    },
+    "shoes": {
+      "type": "lf-products",
+      "settings": {
+        "collection": "mocasines",
+        "eyebrow": "Wygoda przez cały dzień",
+        "heading": "Nasze mokasyny",
+        "text": "",
+        "limit": 4,
+        "button": "Zobacz wszystkie mokasyny",
+        "bg": "#fbf8f4"
+      }
+    },
+    "guar": {
+      "type": "lf-guarantee",
+      "blocks": {
+        "guar_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Darmowa wysyłka z numerem śledzenia",
+            "text": "Wszystkie zamówienia do Polski wysyłamy za darmo i z numerem śledzenia, abyś zawsze wiedziała, gdzie jest Twoja paczka."
+          }
+        },
+        "guar_2": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30 dni na zwrot",
+            "text": "Jeśli coś Ci nie odpowiada, masz 30 dni od otrzymania na zgłoszenie zwrotu."
+          }
+        },
+        "guar_3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "100% bezpieczna płatność",
+            "text": "Szyfrowane płatności obsługiwane przez Shopify. Akceptujemy kartę, Apple Pay, Google Pay i Shop Pay."
+          }
+        },
+        "guar_4": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "title": "Zawsze przy Tobie",
+            "text": "Napisz na liafemme23@gmail.com – odpowiemy w ciągu 24 godzin."
+          }
+        }
+      },
+      "block_order": [
+        "guar_1",
+        "guar_2",
+        "guar_3",
+        "guar_4"
+      ],
+      "settings": {
+        "eyebrow": "Zakupy bez ryzyka",
+        "heading": "Dlaczego warto kupować w sklepie Zofia Nowak"
+      }
+    },
+    "faq": {
+      "type": "lf-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak długo trwa dostawa?",
+            "a": "<p>Przygotowujemy zamówienie w 1–3 dni robocze, a dostawa do Polski trwa zwykle od 7 do 14 dni roboczych. Numer śledzenia otrzymasz e-mailem, gdy tylko paczka zostanie wysłana.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "qa",
+          "settings": {
+            "q": "Czy wysyłka jest darmowa?",
+            "a": "<p>Tak. Wysyłka jest darmowa przy wszystkich zamówieniach do Polski, bez minimalnej kwoty.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "qa",
+          "settings": {
+            "q": "Czy mogę zwrócić produkt?",
+            "a": "<p>Tak, masz 30 dni od otrzymania. Napisz na liafemme23@gmail.com, podając numer zamówienia, a wskażemy kolejne kroki. Szczegóły znajdziesz w naszej <a href=\"/policies/refund-policy\">polityce zwrotów</a>.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak wybrać rozmiar?",
+            "a": "<p>Każdy produkt ma swoją tabelę wymiarów. Możesz też sprawdzić naszą <a href=\"/pages/guia-de-tallas\">tabelę rozmiarów</a> lub napisać do nas, a doradzimy.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "qa",
+          "settings": {
+            "q": "Jakie formy płatności akceptujecie?",
+            "a": "<p>Karta debetowa lub kredytowa, Apple Pay, Google Pay i Shop Pay. Wszystkie płatności są szyfrowane.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak mogę śledzić zamówienie?",
+            "a": "<p>Za pomocą numeru śledzenia, który wysyłamy e-mailem, lub na stronie <a href=\"/apps/parcelpanel\">Śledź zamówienie</a>.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Pomoc",
+        "heading": "Najczęściej zadawane pytania",
+        "contact": "Masz inne pytanie? Napisz na <a href=\"mailto:liafemme23@gmail.com\">liafemme23@gmail.com</a>"
+      }
+    },
+    "lf_faq_cyjPwB": {
+      "type": "lf-faq",
+      "blocks": {
+        "qa_NJNjTx": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak długo trwa dostawa?",
+            "a": "<p>Przygotowujemy zamówienie w 1–3 dni robocze, a dostawa do Polski trwa zwykle od 7 do 14 dni roboczych. Numer śledzenia otrzymasz e-mailem, gdy tylko paczka zostanie wysłana.</p>"
+          }
+        },
+        "qa_tTp4qR": {
+          "type": "qa",
+          "settings": {
+            "q": "Czy wysyłka jest darmowa?",
+            "a": "<p>Tak. Wysyłka jest darmowa przy wszystkich zamówieniach do Polski, bez minimalnej kwoty.</p>"
+          }
+        },
+        "qa_eicNkP": {
+          "type": "qa",
+          "settings": {
+            "q": "Czy mogę zwrócić produkt?",
+            "a": "<p>Tak, masz 30 dni od otrzymania. Napisz na liafemme23@gmail.com, podając numer zamówienia, a wskażemy kolejne kroki. Szczegóły znajdziesz w naszej <a href=\"/policies/refund-policy\">polityce zwrotów</a>.</p>"
+          }
+        },
+        "qa_HnpMBn": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak wybrać rozmiar?",
+            "a": "<p>Każdy produkt ma swoją tabelę wymiarów. Możesz też sprawdzić naszą <a href=\"/pages/guia-de-tallas\">tabelę rozmiarów</a> lub napisać do nas, a doradzimy.</p>"
+          }
+        },
+        "qa_MP7zqR": {
+          "type": "qa",
+          "settings": {
+            "q": "Jakie formy płatności akceptujecie?",
+            "a": "<p>Karta debetowa lub kredytowa, Apple Pay, Google Pay i Shop Pay. Wszystkie płatności są szyfrowane.</p>"
+          }
+        },
+        "qa_AaeLcx": {
+          "type": "qa",
+          "settings": {
+            "q": "Jak mogę śledzić zamówienie?",
+            "a": "<p>Za pomocą numeru śledzenia, który wysyłamy e-mailem, lub na stronie <a href=\"/apps/parcelpanel\">Śledź zamówienie</a>.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "qa_NJNjTx",
+        "qa_tTp4qR",
+        "qa_eicNkP",
+        "qa_HnpMBn",
+        "qa_MP7zqR",
+        "qa_AaeLcx"
+      ],
+      "settings": {
+        "eyebrow": "Pomoc",
+        "heading": "Najczęściej zadawane pytania",
+        "contact": "Masz inne pytanie? Napisz na <a href=\"mailto:liafemme23@gmail.com\">liafemme23@gmail.com</a>"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "cats",
+    "best",
+    "story",
+    "new",
+    "shoes",
+    "guar",
+    "faq",
+    "lf_faq_cyjPwB"
+  ]
+}

@@ -1,4 +1,4 @@
-# Checkout Lia Femme – lista de acciones
+# Checkout Zofia Nowak – lista de acciones
 
 Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo normal es 40-50 %.
 
@@ -26,7 +26,7 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 - [ ] Propinas: **desactivadas**.
 
 ### 3. Diseño del checkout – Ajustes → Checkout → Personalizar
-- [ ] Logo: el de Lia Femme (tamaño mediano), alineado al centro.
+- [ ] Logo: el de Zofia Nowak (`logo/zofia-nowak-logo.png`, tamaño mediano), alineado al centro.
 - [ ] Colores: fondo `#FBF8F4`, botones `#1E1A17`, acento `#9C5B3E`.
 - [ ] Tipografía: títulos Playfair Display, texto Inter.
 - [ ] Esquinas: redondeadas.

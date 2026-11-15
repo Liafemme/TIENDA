@@ -1,0 +1,54 @@
+/* Zofia Nowak – capa de diseño */
+:root{--lf-bg:#fbf8f4;--lf-ink:#1e1a17;--lf-muted:#6b625a;--lf-line:#e7dfd5;--lf-soft:#f3ede5;--lf-accent:#9c5b3e;--lf-sale:#a23b2c;--lf-radius:4px}
+body{background:var(--lf-bg);color:var(--lf-ink);-webkit-font-smoothing:antialiased}
+h1,h2,h3,.h1,.h2,.h3{letter-spacing:-.01em}
+.lf-wrap{max-width:1320px;margin:0 auto;padding:0 20px}
+@media(min-width:990px){.lf-wrap{padding:0 40px}}
+.lf-section{padding:56px 0}
+@media(min-width:990px){.lf-section{padding:88px 0}}
+.lf-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--lf-muted);margin:0 0 12px}
+.lf-title{font-family:var(--font-heading--family);font-weight:400;font-size:clamp(28px,4.2vw,46px);line-height:1.1;margin:0 0 14px}
+.lf-sub{color:var(--lf-muted);font-size:15px;line-height:1.6;margin:0 auto;max-width:560px}
+.lf-head{text-align:center;margin-bottom:32px}
+@media(min-width:990px){.lf-head{margin-bottom:48px}}
+.lf-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 34px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;transition:all .25s ease;border:1px solid var(--lf-ink);background:var(--lf-ink);color:#fff;cursor:pointer}
+.lf-btn:hover{background:var(--lf-accent);border-color:var(--lf-accent);color:#fff}
+.lf-btn--light{background:#fff;color:var(--lf-ink);border-color:#fff}
+.lf-btn--light:hover{background:var(--lf-ink);border-color:var(--lf-ink);color:#fff}
+.lf-btn--ghost{background:transparent;color:#fff;border-color:#fff}
+.lf-btn--ghost:hover{background:#fff;color:var(--lf-ink)}
+.lf-btn--outline{background:transparent;color:var(--lf-ink)}
+.lf-btn--outline:hover{background:var(--lf-ink);color:#fff}
+/* Unifica fondos blancos de fotos de producto con el tono de la marca */
+.lf-card__media,.card-gallery,.product-media-container{background:var(--lf-soft)}
+.lf-card__media img,.card-gallery img{mix-blend-mode:multiply}
+/* Etiquetas de oferta */
+.product-badges__badge,.product-badges .badge{background:var(--lf-sale)!important;color:#fff!important;font-size:11px;letter-spacing:.06em;font-weight:600}
+/* Precio tachado más sutil y precio de oferta destacado */
+.price s,.compare-at-price{color:var(--lf-muted)}
+/* Botones de compra en ficha de producto */
+.add-to-cart-button,.product-form .button{min-height:54px;letter-spacing:.14em;text-transform:uppercase;font-size:13px;font-weight:600}
+/* Acordeones */
+.product-details details summary{font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+/* Tarjetas de producto LF (globales, también en ficha de producto) */
+.lf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 12px}
+@media(min-width:990px){.lf-grid{grid-template-columns:repeat(4,1fr);gap:44px 22px}}
+.lf-card__media{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;border-radius:var(--lf-radius)}
+.lf-card__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .45s ease,transform .8s ease}
+.lf-card__img--2{opacity:0}
+@media(hover:hover){.lf-card:hover .lf-card__img--2{opacity:1}.lf-card:hover .lf-card__img{transform:scale(1.03)}}
+.lf-card__badge{position:absolute;top:10px;left:10px;background:var(--lf-sale);color:#fff;font-size:11px;font-weight:600;letter-spacing:.05em;padding:5px 9px;border-radius:999px}
+.lf-card__badge--out{background:var(--lf-ink)}
+.lf-card__info{padding-top:12px;text-align:left}
+.lf-card__title{display:block;color:var(--lf-ink);text-decoration:none;font-size:14px;line-height:1.35;margin-bottom:6px}
+.lf-card__price{display:flex;gap:8px;align-items:baseline;font-size:14px}
+.lf-card__now{font-weight:600}.lf-card__now.is-sale{color:var(--lf-sale)}
+.lf-card__price s{color:var(--lf-muted);font-size:13px}
+.lf-card__meta{display:block;margin-top:5px;font-size:12px;color:var(--lf-muted)}
+.lf-products__more{text-align:center;margin-top:40px}
+/* Barra de anuncios: texto siempre centrado */
+.announcement-bar__slider{justify-content:center}
+.announcement-bar__slider slideshow-arrows{display:none!important}
+.announcement-bar__slides{width:100%!important;max-width:100%!important;margin-inline:auto;justify-items:center}
+.announcement-bar__slide{display:flex!important;align-items:center;justify-content:center;width:100%;text-align:center!important}
+.announcement-bar__text{width:100%;margin:0 auto!important;text-align:center!important;letter-spacing:.08em;line-height:1.3!important}
