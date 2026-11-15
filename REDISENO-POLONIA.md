@@ -66,3 +66,6 @@ Tema live actual: "Zofia Nowak – v26 nuevo nombre y logo". El mercado "Polska"
 - Subir fotos propias para el banner principal (2400×1100 con modelo) y para "Nasza historia" / "30 dni na zwrot" (Personalizar → sección → Foto).
 - Añadir opiniones reales en "PL · Opiniones" (o conseguir reseñas en Judge.me).
 - La colección "Jesień 2026" no está publicada en la tienda online: publícala o quita los enlaces que apuntan a ella.
+
+## Moneda (15/11/2026)
+- Todos los mercados (España, Unión Europea, Polska y los borradores EE. UU./Reino Unido) cobran en PLN sin moneda local. Los países sin mercado propio también ven PLN (comprobado ES, FR, DE, PL, US, CH).
