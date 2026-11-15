@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1e1a17;--rose:#b98689}
+body{margin:0;background:#fff;font-family:Jost,sans-serif}
+.logo{display:inline-flex;align-items:center;padding:24px 32px;color:var(--ink);white-space:nowrap}
+/* 1 Klasyczny */
+#l1{font-family:'Bodoni Moda',serif;font-weight:500;font-variation-settings:'opsz' 11;font-size:96px;letter-spacing:.16em}
+#l1 .sp{display:inline-block;width:.35em}
+/* 2 Minimalny */
+#l2{font-family:Jost;font-weight:400;font-size:84px;letter-spacing:.38em}
+#l2 .sp{display:inline-block;width:.75em}
+/* 3 Con subtítulo */
+#l3{flex-direction:column;gap:14px}
+#l3 .n{font-family:'Bodoni Moda',serif;font-weight:500;font-variation-settings:'opsz' 11;font-size:92px;letter-spacing:.14em;line-height:1}
+#l3 .t{display:flex;align-items:center;gap:22px;font-family:Jost;font-weight:400;font-size:24px;letter-spacing:.55em;color:var(--rose)}
+#l3 .t i{display:block;width:70px;height:1.5px;background:var(--rose)}
+/* 4 Monograma + nombre */
+#l4{gap:36px}
+.mono{position:relative;width:150px;height:150px;flex:none}
+.mono span{position:absolute;font-family:'Cormorant Garamond',serif;font-weight:500;line-height:1}
+.mono .z{font-size:150px;left:0;top:-6px;color:var(--ink)}
+.mono .nn{font-size:150px;left:48px;top:14px;color:var(--rose);font-style:italic}
+#l4 .bar{width:1.5px;height:110px;background:var(--ink);opacity:.35}
+#l4 .w{font-family:Jost;font-weight:400;font-size:62px;letter-spacing:.34em}
+/* favicon */
+#fav{width:512px;height:512px;padding:0;justify-content:center;background:#fbf8f4}
+#fav .mono{transform:scale(2.3)}
+</style></head><body>
+<div class="logo" id="l1">ZOFIA<span class="sp"></span>NOWAK</div><br>
+<div class="logo" id="l2">ZOFIA<span class="sp"></span>NOWAK</div><br>
+<div class="logo" id="l3"><div class="n">ZOFIA NOWAK</div><div class="t"><i></i>MODA DAMSKA<i></i></div></div><br>
+<div class="logo" id="l4"><div class="mono"><span class="z">Z</span><span class="nn">N</span></div><div class="bar"></div><div class="w">ZOFIA NOWAK</div></div><br>
+<div class="logo" id="fav"><div class="mono"><span class="z">Z</span><span class="nn">N</span></div></div>
+</body></html>
