@@ -1,0 +1,39 @@
+<section class="lf-news">
+  <div class="lf-wrap lf-news__in">
+    <p class="lf-eyebrow" style="color:#d9cbbd">{{ section.settings.eyebrow }}</p>
+    <h2 class="lf-title" style="color:#fff">{{ section.settings.heading }}</h2>
+    <p class="lf-sub" style="color:#d9cbbd">{{ section.settings.text }}</p>
+    {%- form 'customer', id: 'lf-newsletter', class: 'lf-news__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      {%- if form.posted_successfully? -%}
+        <p class="lf-news__ok">Dziękujemy! Jesteś już na liście.</p>
+      {%- else -%}
+        <label class="visually-hidden" for="lf-news-email">Email</label>
+        <input id="lf-news-email" type="email" name="contact[email]" placeholder="Twój e-mail" autocomplete="email" required>
+        <button class="lf-btn lf-btn--light" type="submit">{{ section.settings.button }}</button>
+        {%- if form.errors -%}<p class="lf-news__err">{{ form.errors.translated_fields.email }} {{ form.errors.messages.email }}</p>{%- endif -%}
+      {%- endif -%}
+    {%- endform -%}
+    <p class="lf-news__legal">Możesz wypisać się w każdej chwili. Zobacz naszą <a href="{{ shop.privacy_policy.url }}">politykę prywatności</a>.</p>
+  </div>
+</section>
+<style>
+.lf-news{background:#2b2522;color:#fff;padding:64px 0;text-align:center}
+.lf-news__in{max-width:640px}
+.lf-news__form{display:flex;flex-direction:column;gap:10px;margin:26px auto 0;max-width:480px}
+@media(min-width:750px){.lf-news__form{flex-direction:row}}
+.lf-news__form input[type=email]{flex:1;min-height:50px;border-radius:999px;border:1px solid #6b5f57;background:transparent;color:#fff;padding:0 22px;font-size:14px}
+.lf-news__form input::placeholder{color:#b3a79c}
+.lf-news__ok{font-size:15px;margin:0 auto}
+.lf-news__err{color:#ffb4a8;font-size:13px}
+.lf-news__legal{font-size:11px;color:#a2958a;margin-top:14px}
+.lf-news__legal a{color:inherit}
+</style>
+{% schema %}
+{"name":"LF · Newsletter","settings":[
+{"type":"text","id":"eyebrow","label":"Antetítulo","default":"Club Lia Femme"},
+{"type":"text","id":"heading","label":"Título","default":"Sé la primera en enterarte"},
+{"type":"text","id":"text","label":"Texto","default":"Novedades, reposiciones y ofertas exclusivas, directamente en tu email."},
+{"type":"text","id":"button","label":"Botón","default":"Suscribirme"}],
+"presets":[{"name":"LF · Newsletter"}]}
+{% endschema %}

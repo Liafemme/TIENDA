@@ -1,0 +1,21 @@
+{%- comment -%}
+  Estrellas con relleno parcial (p. ej. 4,6 → 4 llenas y una al 60 %).
+  - rating: nota (número)
+  - scale: nota máxima (por defecto 5)
+  - size: tamaño en px (por defecto 14)
+{%- endcomment -%}
+{%- liquid
+  assign scale = scale | default: 5
+  assign size = size | default: 14
+  assign pct = rating | times: 100.0 | divided_by: scale | round: 1
+-%}
+<span class="lf-stars" style="--lf-stars-size:{{ size }}px;--lf-stars-fill:{{ pct }}%" role="img" aria-label="{{ rating | round: 1 | append: '' | replace: '.', ',' }} de {{ scale }} estrellas">
+  <span class="lf-stars__bg" aria-hidden="true">★★★★★</span>
+  <span class="lf-stars__fg" aria-hidden="true">★★★★★</span>
+</span>
+
+{% stylesheet %}
+  .lf-stars{position:relative;display:inline-block;font-size:var(--lf-stars-size);line-height:1;letter-spacing:.08em;vertical-align:middle;white-space:nowrap}
+  .lf-stars__bg{color:#e2d6c8}
+  .lf-stars__fg{position:absolute;inset:0 auto 0 0;width:var(--lf-stars-fill);overflow:hidden;color:#b8862f}
+{% endstylesheet %}

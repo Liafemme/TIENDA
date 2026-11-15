@@ -1,0 +1,26 @@
+{%- comment -%}
+  Línea de confianza: iconos en cuadros negros + texto subrayado.
+  - text: texto (por defecto "Envío gratis · 30 días para devolver")
+  - link: enlace (por defecto la política de envíos)
+{%- endcomment -%}
+{%- assign text = text | default: 'Envío gratis · 30 días para devolver' -%}
+{%- if text != blank -%}
+<div class="lf-tl">
+  <span class="lf-tl__icons" aria-hidden="true">
+    <span class="lf-tl__box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3v3h-7z"/><circle cx="6.5" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg></span>
+    <span class="lf-tl__box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5L4 9l4 4"/></svg></span>
+    <span class="lf-tl__box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+  </span>
+  <a class="lf-tl__txt" href="{{ link | default: '/policies/shipping-policy' }}">{{ text }}</a>
+</div>
+{%- endif -%}
+
+<style>
+  .lf-tl{display:flex;align-items:center;gap:16px;margin:4px 0}
+  .lf-tl__icons{display:inline-flex;gap:2px;line-height:0;flex-shrink:0}
+  .lf-tl__box{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#1e1a17}
+  .lf-tl__box svg{width:14px;height:14px}
+  .lf-tl__txt{font-family:var(--font-heading--family,'Playfair Display'),serif;font-size:17px;line-height:1.2;color:#1e1a17;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+  .lf-tl__txt:hover{opacity:.75}
+  @media (max-width:749px){.lf-tl{gap:12px}.lf-tl__box{width:21px;height:21px}.lf-tl__box svg{width:16px;height:16px}.lf-tl__txt{font-size:16px;white-space:nowrap}}
+</style>

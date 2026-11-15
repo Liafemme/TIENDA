@@ -1,0 +1,12 @@
+{%- comment -%}
+  Cuenta atrás diaria en casillas (horas · min · seg) del Black Friday anticipado.
+  La rellena el script de snippets/lf-halloween.liquid (se reinicia cada día).
+  Uso: {% render 'lf-hw-countdown' %}
+{%- endcomment -%}
+<div class="lf-hw-cd" data-lf-cd role="timer" aria-label="Czas do końca dzisiejszej oferty">
+  <span class="lf-hw-cd__u"><b data-u="h">--</b><small>horas</small></span>
+  <span class="lf-hw-cd__sep" aria-hidden="true">:</span>
+  <span class="lf-hw-cd__u"><b data-u="m">--</b><small>min</small></span>
+  <span class="lf-hw-cd__sep" aria-hidden="true">:</span>
+  <span class="lf-hw-cd__u"><b data-u="s">--</b><small>seg</small></span>
+</div>

@@ -1,0 +1,75 @@
+{%- liquid
+  assign p = closest.product
+  assign v = p.selected_or_first_available_variant
+  assign bs = block.settings
+-%}
+<div class="lf-bb" {{ block.shopify_attributes }}>
+  {%- if bs.promo != blank -%}<p class="lf-bb__promo">{% render 'lf-icon', icon: 'gift', size: 18 %}<span>{{ bs.promo }}</span></p>{%- endif -%}
+  {%- if bs.show_savings and v.compare_at_price > v.price -%}
+    {%- assign save = v.compare_at_price | minus: v.price -%}
+    <p class="lf-bb__save">Ahorras {{ save | money }} ({{ save | times: 100 | divided_by: v.compare_at_price }}%)</p>
+  {%- endif -%}
+  {%- if bs.show_delivery -%}
+    {%- liquid
+      assign t = 'now' | date: '%s' | plus: 0
+      assign added = 0
+      assign d_min = ''
+      assign d_max = ''
+      for i in (1..40)
+        assign t = t | plus: 86400
+        assign wd = t | date: '%u' | plus: 0
+        if wd < 6
+          assign added = added | plus: 1
+          if added == bs.min_days
+            assign d_min = t
+          endif
+          if added == bs.max_days
+            assign d_max = t
+            break
+          endif
+        endif
+      endfor
+      assign months = 'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic' | split: ','
+      assign m1 = d_min | date: '%m' | plus: -1
+      assign m2 = d_max | date: '%m' | plus: -1
+    -%}
+    <div class="lf-bb__ship">
+      {% render 'lf-icon', icon: 'truck', size: 22 %}
+      <span>Pídelo hoy y recíbelo entre el <strong>{{ d_min | date: '%-d' }} {{ months[m1] }}</strong> y el <strong>{{ d_max | date: '%-d' }} {{ months[m2] }}</strong> · Envío gratis con seguimiento</span>
+    </div>
+  {%- endif -%}
+  <ul class="lf-bb__list">
+    {%- if bs.line_1 != blank -%}<li>{% render 'lf-icon', icon: 'return', size: 18 %}<span>{{ bs.line_1 }}</span></li>{%- endif -%}
+    {%- if bs.line_2 != blank -%}<li>{% render 'lf-icon', icon: 'lock', size: 18 %}<span>{{ bs.line_2 }}</span></li>{%- endif -%}
+    {%- if bs.line_3 != blank -%}<li>{% render 'lf-icon', icon: 'chat', size: 18 %}<span>{{ bs.line_3 }}</span></li>{%- endif -%}
+  </ul>
+  {%- if bs.show_payment -%}
+    <ul class="lf-bb__pay" aria-label="Métodos de pago">{%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}</li>{%- endfor -%}</ul>
+  {%- endif -%}
+</div>
+<style>
+.lf-bb{display:grid;gap:14px}
+.lf-bb__promo{display:flex;gap:10px;align-items:center;margin:0;background:#1e1a17;color:#fff;border-radius:4px;padding:11px 14px;font-size:13px;font-weight:500}
+.lf-bb__promo strong{color:#f1c9a8}
+.lf-bb__save{margin:0;color:#a23b2c;font-size:13px;font-weight:600}
+.lf-bb__ship{display:flex;gap:12px;align-items:flex-start;background:#f3ede5;border-radius:4px;padding:14px 16px;font-size:13px;line-height:1.5}
+.lf-bb__ship .lf-icon{flex:0 0 auto;color:#9c5b3e;margin-top:1px}
+.lf-bb__list{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:13px}
+.lf-bb__list li{display:flex;gap:10px;align-items:center}
+.lf-bb__list .lf-icon{color:#9c5b3e;flex:0 0 auto}
+.lf-bb__pay{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.lf-bb__pay svg{width:38px;height:24px}
+</style>
+{% schema %}
+{"name":"LF · Confianza y entrega","settings":[
+{"type":"inline_richtext","id":"promo","label":"Promoción destacada","default":"<strong>Compra 2 y ahorra un 15%</strong> · se aplica solo en el carrito"},
+{"type":"checkbox","id":"show_savings","label":"Mostrar ahorro","default":true},
+{"type":"checkbox","id":"show_delivery","label":"Mostrar fecha estimada de entrega","default":true},
+{"type":"number","id":"min_days","label":"Entrega mínima (días laborables)","default":7},
+{"type":"number","id":"max_days","label":"Entrega máxima (días laborables)","default":14},
+{"type":"text","id":"line_1","label":"Línea 1","default":"30 días para devoluciones"},
+{"type":"text","id":"line_2","label":"Línea 2","default":"Pago 100% seguro y cifrado"},
+{"type":"text","id":"line_3","label":"Línea 3","default":"Atención por email en menos de 24 h"},
+{"type":"checkbox","id":"show_payment","label":"Mostrar iconos de pago","default":true}],
+"presets":[{"name":"LF · Confianza y entrega"}]}
+{% endschema %}

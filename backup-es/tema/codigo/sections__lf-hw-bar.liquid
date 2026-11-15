@@ -1,0 +1,63 @@
+{%- comment -%}
+  Section contract.
+  Franja de ofertas en el grupo de cabecera.
+{%- endcomment -%}
+<div class="lf-hwbar">
+  <a class="lf-hwbar__in" href="{{ section.settings.link | default: routes.all_products_collection_url }}">
+    <span class="lf-hwbar__txt"><span aria-hidden="true">🖤</span> {{ section.settings.text | escape }}</span>
+    {%- if section.settings.show_countdown -%}
+      <span class="lf-hwbar__cd">
+        <span class="lf-hwbar__cd-l">Termina en</span>
+        <span class="lf-hwbar__boxes" data-lf-cd role="timer" aria-label="Tiempo restante de la oferta de hoy">
+          <span class="lf-hwbar__u"><b data-u="h">--</b><small>h</small></span><span class="lf-hwbar__sep" aria-hidden="true">:</span>
+          <span class="lf-hwbar__u"><b data-u="m">--</b><small>min</small></span><span class="lf-hwbar__sep" aria-hidden="true">:</span>
+          <span class="lf-hwbar__u"><b data-u="s">--</b><small>seg</small></span>
+        </span>
+      </span>
+    {%- endif -%}
+    {%- if section.settings.cta != blank -%}<span class="lf-hwbar__cta">{{ section.settings.cta | escape }} →</span>{%- endif -%}
+  </a>
+</div>
+<style>
+  .lf-hwbar{background:linear-gradient(90deg,#141110 0%,#2b2522 50%,#141110 100%);color:#fbf3ec;border-bottom:1px solid rgba(192,138,91,.35)}
+  .lf-hwbar__in{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 16px;max-width:1320px;margin:0 auto;padding:8px 16px;color:inherit;text-decoration:none;font-size:13px;letter-spacing:.06em;text-align:center}
+  .lf-hwbar__txt{text-transform:uppercase;font-weight:700;letter-spacing:.12em}
+  .lf-hwbar__cd{display:inline-flex;align-items:center;gap:8px;color:#ead7bf;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+  .lf-hwbar__boxes{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+  .lf-hwbar__u{display:inline-flex;align-items:baseline;gap:2px;min-width:44px;justify-content:center;padding:4px 7px;border-radius:7px;background:#c08a5b;color:#141110;letter-spacing:0;text-transform:none}
+  .lf-hwbar__u b{font-size:18px;line-height:1;font-weight:800}
+  .lf-hwbar__u small{font-size:10px;font-weight:700}
+  .lf-hwbar__sep{font-size:16px;font-weight:800;color:#c08a5b}
+  .lf-hwbar__cta{color:#ead7bf;text-decoration:underline;text-underline-offset:3px;font-weight:600}
+  @media(max-width:749px){
+    .lf-hwbar__cta,.lf-hwbar__cd-l{display:none}
+    .lf-hwbar__in{flex-wrap:nowrap;gap:10px;padding:7px 10px;font-size:11.5px;white-space:nowrap}
+    .lf-hwbar__txt{letter-spacing:.04em}
+    .lf-hwbar__boxes{gap:2px}
+    .lf-hwbar__u{min-width:38px;padding:4px 5px}
+    .lf-hwbar__u b{font-size:16px}
+    .lf-hwbar__u small{font-size:9px}
+    .lf-hwbar__sep{font-size:13px}
+  }
+  @media(max-width:374px){
+    .lf-hwbar__in{gap:6px;padding:7px 6px;font-size:10.5px}
+    .lf-hwbar__txt{letter-spacing:.01em}
+    .lf-hwbar__txt>span{display:none}
+    .lf-hwbar__u{min-width:32px;padding:3px 4px}
+    .lf-hwbar__u b{font-size:14px}
+    .lf-hwbar__sep{font-size:12px}
+  }
+</style>
+{% schema %}
+{
+  "name": "LF · Franja ofertas",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "text", "id": "text", "label": "Texto", "default": "Black Friday anticipado" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Mostrar cuenta atrás diaria", "default": true },
+    { "type": "text", "id": "cta", "label": "Texto del enlace", "default": "Comprar ya" },
+    { "type": "url", "id": "link", "label": "Enlace" }
+  ],
+  "presets": [{ "name": "LF · Franja ofertas" }]
+}
+{% endschema %}

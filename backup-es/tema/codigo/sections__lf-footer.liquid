@@ -1,0 +1,69 @@
+<section class="lf-foot">
+  <div class="lf-wrap">
+    <div class="lf-foot__grid">
+      <div class="lf-foot__brand">
+        <p class="lf-foot__logo">{{ shop.name }}</p>
+        <p>{{ section.settings.about }}</p>
+        {%- if section.settings.email != blank -%}<p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a><br>{{ section.settings.hours }}</p>{%- endif -%}
+        <div class="lf-foot__social">
+          {%- if section.settings.instagram != blank -%}<a href="{{ section.settings.instagram }}" target="_blank" rel="noopener">Instagram</a>{%- endif -%}
+          {%- if section.settings.tiktok != blank -%}<a href="{{ section.settings.tiktok }}" target="_blank" rel="noopener">TikTok</a>{%- endif -%}
+          {%- if section.settings.facebook != blank -%}<a href="{{ section.settings.facebook }}" target="_blank" rel="noopener">Facebook</a>{%- endif -%}
+        </div>
+      </div>
+      {%- for m in (1..3) -%}
+        {%- assign mk = 'menu_' | append: m -%}
+        {%- assign tk = 'title_' | append: m -%}
+        {%- assign menu = section.settings[mk] -%}
+        {%- if menu != blank -%}
+        <details class="lf-foot__col" open>
+          <summary>{{ section.settings[tk] | default: menu.title }}</summary>
+          <ul>{%- for link in menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul>
+        </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <div class="lf-foot__bottom">
+      <ul class="lf-foot__pay" aria-label="Métodos de pago">{%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}</li>{%- endfor -%}</ul>
+      <p>© {{ 'now' | date: '%Y' }} {{ shop.name }}. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</section>
+{% render 'lf-autodiscount', code: section.settings.auto_code %}
+<style>
+.lf-foot{background:var(--lf-soft);color:var(--lf-ink);padding:56px 0 28px;font-size:14px}
+.lf-foot a{color:inherit;text-decoration:none}.lf-foot a:hover{color:var(--lf-accent)}
+.lf-foot__grid{display:grid;gap:8px}
+@media(min-width:990px){.lf-foot__grid{grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px}}
+.lf-foot__brand{margin-bottom:20px}
+.lf-foot__brand p{color:var(--lf-muted);line-height:1.7;margin:0 0 12px;max-width:340px}
+.lf-foot__logo{font-family:var(--font-heading--family);font-size:26px;color:var(--lf-ink)!important;margin-bottom:10px!important}
+.lf-foot__social{display:flex;gap:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.lf-foot__col{border-top:1px solid var(--lf-line)}
+@media(min-width:990px){.lf-foot__col{border:0}}
+.lf-foot__col summary{list-style:none;padding:16px 0;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;cursor:default}
+.lf-foot__col summary::-webkit-details-marker{display:none}
+.lf-foot__col ul{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:10px;color:var(--lf-muted)}
+.lf-foot__bottom{border-top:1px solid var(--lf-line);margin-top:32px;padding-top:22px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;font-size:12px;color:var(--lf-muted)}
+@media(min-width:990px){.lf-foot__bottom{flex-direction:row;justify-content:space-between}}
+.lf-foot__pay{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0;justify-content:center}
+.lf-foot__pay svg{width:38px;height:24px}
+.lf-foot__bottom p{margin:0}
+</style>
+{% schema %}
+{"name":"LF · Pie de página","settings":[
+{"type":"textarea","id":"about","label":"Texto de marca","default":"Moda femenina seleccionada con cariño para el día a día."},
+{"type":"text","id":"email","label":"Email de contacto"},
+{"type":"text","id":"hours","label":"Horario"},
+{"type":"text","id":"title_1","label":"Título menú 1"},
+{"type":"link_list","id":"menu_1","label":"Menú 1"},
+{"type":"text","id":"title_2","label":"Título menú 2"},
+{"type":"link_list","id":"menu_2","label":"Menú 2"},
+{"type":"text","id":"title_3","label":"Título menú 3"},
+{"type":"link_list","id":"menu_3","label":"Menú 3"},
+{"type":"url","id":"instagram","label":"Instagram"},
+{"type":"url","id":"tiktok","label":"TikTok"},
+{"type":"url","id":"facebook","label":"Facebook"},
+{"type":"text","id":"auto_code","label":"Código automático en carrito","default":"BIENVENIDA10","info":"Déjalo vacío para desactivarlo"}],
+"presets":[{"name":"LF · Pie de página"}]}
+{% endschema %}

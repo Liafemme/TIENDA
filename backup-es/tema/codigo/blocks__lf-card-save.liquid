@@ -1,0 +1,33 @@
+{%- comment -%}
+  Línea de ahorro bajo el precio en las tarjetas de producto: "-50% · AHORRAS 65,05 €".
+{%- endcomment -%}
+{%- assign p = closest.product -%}
+{%- if p.compare_at_price > p.price -%}
+  {%- assign lf_pct = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price -%}
+  <div class="lf-csave" {{ block.shopify_attributes }}>
+    <span class="lf-csave__row">
+      {%- if block.settings.show_pct and lf_pct > 0 -%}<span class="lf-csave__pct">-{{ lf_pct }}%</span>{%- endif -%}
+      <span class="lf-csave__tag">{{ block.settings.text | escape }} {{ p.compare_at_price | minus: p.price | money }}</span>
+    </span>
+    {%- if block.settings.hint != blank -%}<span class="lf-csave__hint">{{ block.settings.hint | escape }}</span>{%- endif -%}
+  </div>
+{%- endif -%}
+<style>
+  .lf-csave{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:2px}
+  .lf-csave__row{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
+  .lf-csave__pct{display:inline-block;padding:3px 7px;border-radius:4px;background:#a23b2c;color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em}
+  .lf-csave__tag{display:inline-block;padding:3px 8px;border-radius:4px;background:#2b2522;color:#ead7bf;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .lf-csave__hint{font-size:12px;line-height:1.3;color:#a23b2c;font-weight:600}
+</style>
+{% schema %}
+{
+  "name": "LF · Ahorro",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "text", "label": "Texto", "default": "Ahorras" },
+    { "type": "checkbox", "id": "show_pct", "label": "Mostrar % de descuento", "default": false },
+    { "type": "text", "id": "hint", "label": "Texto secundario", "info": "Opcional. Ya se muestra el precio con BIENVENIDA10 dentro del bloque de precio." }
+  ],
+  "presets": [{ "name": "LF · Ahorro" }]
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+{%- comment -%}
+  Nota media de toda la tienda, calculada con las reseñas reales que Judge.me guarda
+  en cada producto (metacampos reviews.rating y reviews.rating_count).
+  Si todavía no hay reseñas, no muestra nada (nunca inventa una nota).
+  - style: 'inline' (una línea) o 'block' (centrado, para secciones)
+  Nota: Shopify solo deja recorrer los primeros 50 productos aquí; con más de 50,
+  la media se calcula con esos 50.
+{%- endcomment -%}
+{%- liquid
+  assign total = 0
+  assign weighted = 0.0
+  for p in collections.all.products
+    assign n = p.metafields.reviews.rating_count.value | default: 0
+    if n > 0
+      assign r = p.metafields.reviews.rating.value.rating | times: 1.0
+      assign total = total | plus: n
+      assign weighted = r | times: n | plus: weighted
+    endif
+  endfor
+-%}
+{%- if total > 0 -%}
+  {%- assign avg = weighted | divided_by: total | round: 1 -%}
+  <div class="lf-srating lf-srating--{{ style | default: 'inline' }}">
+    {% render 'lf-stars', rating: avg, size: 16 %}
+    <span class="lf-srating__txt"><strong>{{ avg | append: '' | replace: '.', ',' }}/5</strong> · {{ total }} {% if total == 1 %}reseña{% else %}reseñas{% endif %}</span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+    .lf-srating{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--lf-ink,#1e1a17)}
+    .lf-srating--block{flex-direction:column;gap:6px;font-size:14px}
+    .lf-srating__txt strong{font-weight:600}
+{% endstylesheet %}
