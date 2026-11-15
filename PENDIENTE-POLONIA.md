@@ -11,10 +11,10 @@
 - Tema: copia **"Lia Femme – v25 Polska (Claude)"** creada (sin publicar). Plantillas traducidas listas en `tema-pl/` (diccionario en `tools/tema_pl.json`).
 
 ## Falta (lo hago yo)
-- Subir las plantillas de `tema-pl/` a la copia v25 y traducir los textos fijos del código (snippets `lf-*`: ventana de bienvenida, carrito, barra de descuentos, estrellas) → **necesito que reconectes la app de Shopify** (pide permisos nuevos para editar temas).
-- Reseñas inventadas (sección "reseñas fake" y testimonios con nombres) desactivadas en la copia polaca: no se traducen.
+- Nada pendiente por mi parte. Tema v25 Polska: 17 plantillas + 20 archivos de código traducidos y subidos (verificados). Reseñas inventadas desactivadas en la copia polaca.
 
 ## Falta (lo haces tú en Shopify)
+- Tienda online → Temas: revisar en vista previa **"Lia Femme – v25 Polska (Claude)"** y **publicarlo**.
 - Ajustes → Idiomas: poner **polaco como idioma predeterminado** (así el checkout y los emails salen en polaco).
 - Ajustes → Políticas: pegar `politicas/wysylka.html` (envío) y `politicas/zwroty.html` (reembolso). Privacidad y Términos: "Crear desde plantilla" una vez el idioma esté en polaco.
 - Pagos: activar **BLIK** y **Przelewy24** (los métodos que más usan en Polonia).
