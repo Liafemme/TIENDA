@@ -18,10 +18,10 @@
 4. [ ] **Logo del checkout**: Ajustes → Checkout → Personalizar → Logo → elegir `zofia-nowak-logo-cabecera.png`.
 5. [ ] **Logo de emails**: Ajustes → Notificaciones → Personalizar plantillas de email → Logo → `zofia-nowak-logo-cabecera.png`.
 6. [ ] **Apps**: Judge.me (nombre de respuesta "Lia Femme" → Zofia Nowak), Klaviyo (nombre del remitente/plantillas).
-7. [ ] Opcional: código de descuento `LIAFEMME` (sección cuenta atrás) y nombre interno del menú "Menu Lia Femme (nowe)".
+7. [ ] Opcional: nombre interno del menú "Menu Lia Femme (nowe)" (solo lo ves tú en el admin).
 
-## Pendiente de decidir
-- **Productos (230)**: el *proveedor* es "Lia Femme" en todos y las descripciones/SEO mencionan "Lia Femme". Se puede hacer por lotes.
+- [x] **Productos**: proveedor "Lia Femme" → "Zofia Nowak" en 216 productos (los 10 de Paola Milano no se tocan), SEO de ~140 productos y 21 descripciones actualizadas. 7 textos SEO que seguían en español, traducidos al polaco. Copia de los datos originales en `backup-productos/`.
+- [x] **Código de la cuenta atrás**: `LIAFEMME` no existía en Shopify; cambiado por `WITAJ10` (activo, -10%) en el tema v26.
 
 ## Usos del monograma
 - Foto de perfil de Instagram / TikTok / Facebook: `logo/propuestas/monograma-c.png` (o el sello `monograma-b.png`).
