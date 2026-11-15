@@ -43,3 +43,25 @@ Datos (30 días): 79 personas llegaron al checkout y solo 2 pagaron (2,5 %). Lo 
 
 ### 6. Prueba final
 - [ ] Hacer una compra real desde el **móvil** (con tarjeta propia, luego reembolsar) y anotar cualquier paso raro.
+
+---
+
+# Cambio a Polonia (solo mercado polaco)
+
+## Ya hecho (por Claude)
+- [x] Mercado **España** desactivado (en borrador). El mercado **Unión Europea** se mantiene.
+- [x] Mercado **Polska** activo con moneda **PLN**. Idioma principal de la tienda: **polaco**.
+- [x] Políticas de envío y devoluciones traducidas al polaco en `politicas/` (las versiones en español siguen en el historial de git).
+
+## Hazlo tú
+### 1. Moneda principal EUR → PLN – Ajustes → Datos de la tienda → Moneda de la tienda
+- [ ] Cambiar a **złoty polaco (PLN)**. Si Shopify no deja (pasa cuando ya hay ventas o pagos con Shopify Payments), contactar con el soporte de Shopify.
+- [ ] ⚠️ Shopify NO convierte los precios: 51,95 € pasa a ser 51,95 zł. **Avisa a Claude justo después** para reescribir los precios de las 4.839 variantes en złoty terminados en 9 (p. ej. 234 → 239 zł, 297 → 299 zł, 1286 → 1289 zł). Mejor hacerlo de noche, con poco tráfico.
+
+### 2. Políticas – Ajustes → Políticas (botón `<>` para HTML)
+- [ ] Pegar `politicas/devoluciones.html` en "Política de reembolso".
+- [ ] Pegar `politicas/envios.html` en "Política de envío".
+- [ ] Traducir también **Privacidad, Términos del servicio y Contacto** (siguen en español).
+
+### 3. Pagos polacos – Ajustes → Pagos
+- [ ] Activar **BLIK** y **Przelewy24** (son los métodos más usados en Polonia).
