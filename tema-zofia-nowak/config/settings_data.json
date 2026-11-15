@@ -9,10 +9,10 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/zofia-nowak-logo.png",
-    "logo_height": 80,
-    "logo_height_mobile": 56,
-    "favicon": "shopify://shop_images/zofia-nowak-favicon.png",
+    "logo": "shopify://shop_images/zofia-nowak-logo-cabecera.png",
+    "logo_height": 30,
+    "logo_height_mobile": 20,
+    "favicon": "shopify://shop_images/zofia-nowak-icono.png",
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
