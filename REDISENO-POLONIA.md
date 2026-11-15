@@ -67,5 +67,9 @@ Tema live actual: "Zofia Nowak – v26 nuevo nombre y logo". El mercado "Polska"
 - Añadir opiniones reales en "PL · Opiniones" (o conseguir reseñas en Judge.me).
 - La colección "Jesień 2026" no está publicada en la tienda online: publícala o quita los enlaces que apuntan a ella.
 
-## Moneda (15/11/2026)
-- Todos los mercados (España, Unión Europea, Polska y los borradores EE. UU./Reino Unido) cobran en PLN sin moneda local. Los países sin mercado propio también ven PLN (comprobado ES, FR, DE, PL, US, CH).
+## Moneda y precios (15/11/2026)
+- España, Unión Europea, EE. UU. y Reino Unido: vuelven a su moneda (EUR / moneda local), como antes.
+- Polonia: catálogo "Polska – ceny PLN" con lista de precios fija "Polska PLN (ceny zaokrąglone)".
+  Regla (como la competencia): precio € × 4,41 y redondeo HACIA ARRIBA al siguiente ...9,99 (o ...4,99 por debajo de 150 zł).
+  Ej.: 44,95 € → 199,99 zł · 51,95 € → 229,99 zł · 59,95 € → 269,99 zł. Precio tachado igual.
+- Productos nuevos o precios cambiados en € NO se actualizan solos: hay que ponerles precio PLN (si no, Shopify convierte automáticamente sin redondeo bonito). Script de cálculo: precios-pln-calc.py
