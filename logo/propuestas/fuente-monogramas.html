@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1e1a17;--rose:#b98689;--bg:#fbf8f4}
+body{margin:0;background:transparent}
+.m{position:relative;width:400px;height:400px;display:flex;align-items:center;justify-content:center}
+.L{font-family:'Bodoni Moda',serif;font-weight:500;font-variation-settings:'opsz' 11;line-height:.8;display:block}
+/* A entrelazado: N detrás, Z delante con contorno de separación */
+#a .wrap{position:relative;width:300px;height:220px}
+#a .n{position:absolute;font-size:260px;color:var(--rose);left:100px;top:-25px}
+#a .z{position:absolute;font-size:260px;color:var(--ink);left:0;top:30px;-webkit-text-stroke:10px var(--bg);paint-order:stroke fill}
+/* B sello circular */
+#b .ring{position:absolute;inset:28px;border:3px solid var(--ink);border-radius:50%}
+#b .ring2{position:absolute;inset:42px;border:1.5px solid var(--rose);border-radius:50%}
+#b .row{display:flex;gap:18px;align-items:baseline;padding-top:22px}
+#b .L{font-size:160px}#b .z{color:var(--ink)}#b .n{color:var(--rose)}
+/* C con línea */
+#c .row{display:flex;align-items:center;gap:26px;padding-top:20px}
+#c .L{font-size:190px;color:var(--ink)}
+#c .div{display:flex;flex-direction:column;align-items:center;gap:10px}
+#c .bar{width:2.5px;height:170px;background:var(--rose)}
+#c .dot{width:13px;height:13px;background:var(--rose);transform:rotate(45deg)}
+</style></head><body>
+<div class="m" id="a"><div class="wrap"><span class="L n">N</span><span class="L z">Z</span></div></div>
+<div class="m" id="b"><div class="ring"></div><div class="ring2"></div><div class="row"><span class="L z">Z</span><span class="L n">N</span></div></div>
+<div class="m" id="c"><div class="row"><span class="L">Z</span><div class="div"><div class="bar"></div><div class="dot"></div></div><span class="L">N</span></div></div>
+</body></html>
