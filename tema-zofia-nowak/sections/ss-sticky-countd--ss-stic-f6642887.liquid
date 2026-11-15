@@ -1,0 +1,2263 @@
+{% comment %}
+---------------------------------------------------------
+Copyright © 2026 Section Store. All rights reserved.
+Unauthorized copying, modification, distribution, or use
+of this code or any portion of it, is strictly prohibited.
+Violators will be prosecuted to the fullest extent of the law.
+For inquiries or permissions, contact daniel@section.store
+---------------------------------------------------------
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign sid = section.id
+
+  comment
+    Build target ISO for fixed_date mode. JS parses with new Date(iso) and falls back gracefully.
+    For daily/weekly, JS recomputes target on the fly; no Liquid build needed.
+  endcomment
+
+  assign end_iso = ''
+  if s.mode == 'fixed_date'
+    assign end_iso = s.end_year | append: '-' | append: s.end_month | append: '-' | append: s.end_day | append: 'T' | append: s.end_hour | append: ':' | append: s.end_minute | append: ':00'
+  endif
+
+  comment
+    The code chip either copies the code or acts as a link. In link mode a blank URL falls back
+    to Shopify's /discount/<code> apply link, so the chip works with no extra setup.
+  endcomment
+  assign code_is_link = false
+  if s.show_code and s.code != blank and s.code_action == 'link'
+    assign code_is_link = true
+  endif
+  assign code_href = ''
+  if code_is_link
+    if s.code_url != blank
+      assign code_href = s.code_url
+    else
+      assign code_href = '/discount/' | append: s.code
+    endif
+  endif
+-%}
+
+<style>
+  {% if s.text_custom %}
+    {{ s.text_font | font_face: font_display: 'swap' }}
+  {% endif %}
+
+  .ss-sticky-cb-{{ sid }} {
+    {% if s.background_style == 'gradient' %}
+      --sscb-bg: {{ s.bg_gradient }};
+    {% else %}
+      --sscb-bg: {{ s.bg_color }};
+    {% endif %}
+    --sscb-glow: {{ s.glow_color }};
+    --sscb-title: {{ s.title_color }};
+    --sscb-number: {{ s.number_color }};
+    --sscb-label: {{ s.label_color }};
+    --sscb-tile-bg: {{ s.tile_bg }};
+    --sscb-code: {{ s.code_color }};
+    --sscb-code-border: {{ s.code_border_color }};
+    --sscb-close: {{ s.close_color }};
+    --sscb-close-size: {{ s.close_size }}px;
+    --sscb-top-offset: {{ s.top_offset }}px;
+    --sscb-title-size: {{ s.title_size }}px;
+    --sscb-number-size: {{ s.number_size }}px;
+    --sscb-label-size: {{ s.label_size }}px;
+    --sscb-gap: {{ s.gap_desktop }}px;
+    --sscb-z: 1000;
+
+    width: 100%;
+    {% if s.position_mode == 'sticky' %}
+      position: sticky;
+    {% else %}
+      position: fixed;
+      inset-inline: 0;
+    {% endif %}
+    inset-block-start: var(--sscb-top-offset);
+    z-index: var(--sscb-z);
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    {% if s.text_custom %}
+      font-family: {{ s.text_font.family }}, {{ s.text_font.fallback_families }};
+      font-weight: {{ s.text_font.weight }};
+      font-style: {{ s.text_font.style }};
+    {% endif %}
+  }
+
+  .ss-sticky-cb__card-{{ sid }} {
+    position: relative;
+    width: 100%;
+    background: var(--sscb-bg);
+    padding-block: 14px;
+    padding-inline: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: var(--sscb-gap);
+    box-sizing: border-box;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  /* Accent halo glow that arcs over the top of the bar. The gradient ellipse is positioned slightly
+     above center horizontally and just above the top edge vertically. The -50% start stop lets the
+     color saturate at the visible peak (top-center) instead of starting from the unreachable
+     gradient origin. Sits above the merchant-set background, below the content. */
+  .ss-sticky-cb__card-{{ sid }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% -20%,
+      var(--sscb-glow) -50%,
+      transparent 50%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .ss-sticky-cb__title-{{ sid }} {
+    color: var(--sscb-title);
+    font-size: var(--sscb-title-size);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  .ss-sticky-cb__timer-{{ sid }} {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4em 1.4em;
+    color: var(--sscb-number);
+  }
+
+  .ss-sticky-cb__unit-{{ sid }} {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45em;
+  }
+
+  .ss-sticky-cb__num-{{ sid }} {
+    font-size: var(--sscb-number-size);
+    font-weight: 700;
+    color: var(--sscb-number);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  {% if s.number_style != 'tiles' %}
+    /* Inline number style: fixed-height window with overflow clipped, so the slide-out/slide-in
+       animation can roll the digit pair vertically. Width is set in `ch` so the box is wide
+       enough for two tabular-num glyphs and is stable across digit transitions. */
+    .ss-sticky-cb__num-{{ sid }} {
+      display: inline-block;
+      block-size: 1.2em;
+      overflow: hidden;
+      text-align: center;
+      min-inline-size: 2ch;
+      vertical-align: baseline;
+    }
+
+    .ss-sticky-cb__num-{{ sid }}[data-changing='1'] {
+      animation: ss-sticky-cb-roll-{{ sid }} 0.4s ease-in-out;
+    }
+
+    /* The animation rolls the NEW value downward past the bottom edge, teleports above the top
+       edge during the invisible mid-frame, then rolls back into place. Perceptually reads as
+       'old slides out, new slides in' because the opacity wipes through 0 across both halves. */
+    @keyframes ss-sticky-cb-roll-{{ sid }} {
+      0%   { transform: translateY(0);     opacity: 1; }
+      50%  { transform: translateY(100%);  opacity: 0; }
+      51%  { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0);     opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ss-sticky-cb__num-{{ sid }}[data-changing='1'] {
+        animation: none;
+      }
+    }
+  {% endif %}
+
+  .ss-sticky-cb__label-{{ sid }} {
+    font-size: var(--sscb-label-size);
+    font-weight: 400;
+    color: var(--sscb-label);
+    line-height: 1;
+  }
+
+  {% if s.number_style == 'tiles' %}
+    /* Flip-clock split-card pattern. Each digit is a perspective container with four absolutely
+       positioned layers:
+         --top  : static, shows the NEW digit (revealed when --flip-top folds away)
+         --bot  : static, shows the OLD digit (covered when --flip-bot unfolds)
+         --flip-top : OLD digit's top half, rotates 0deg -> -90deg around its bottom edge
+         --flip-bot : NEW digit's bottom half, rotates 90deg -> 0deg around its top edge
+       Each half's `overflow: hidden` clips a full-height text element so only its half of the glyph
+       shows. The transitional half-and-half frame (NEW top + OLD bot) is the characteristic
+       flip-clock moment. */
+    .ss-sticky-cb__num-{{ sid }} {
+      display: inline-flex;
+      gap: 0.18em;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit {
+      position: relative;
+      display: inline-block;
+      inline-size: 0.95em;
+      block-size: 1.4em;
+      perspective: 6em;
+      vertical-align: baseline;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card {
+      position: absolute;
+      inset-inline: 0;
+      block-size: 50%;
+      overflow: hidden;
+      background: var(--sscb-tile-bg);
+      color: var(--sscb-number);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--top,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-top {
+      inset-block-start: 0;
+      border-start-start-radius: 0.14em;
+      border-start-end-radius: 0.14em;
+      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--bot,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-bot {
+      inset-block-end: 0;
+      border-end-start-radius: 0.14em;
+      border-end-end-radius: 0.14em;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-top {
+      z-index: 2;
+      transform-origin: bottom;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-bot {
+      z-index: 2;
+      transform-origin: top;
+      transform: rotateX(90deg);
+    }
+
+    /* Subtle highlight/shade gradient on each half — depth like a physical card. */
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--top::before,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-top::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+    }
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--bot::before,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-bot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.18) 100%);
+      pointer-events: none;
+    }
+
+    /* Text is 200% of the half-card so it spans the FULL digit container, flex-centered inside that
+       full span. For the top half, the text's top edge sits at the card's top, so the glyph (at the
+       text element's vertical center) lands right on the fold line — only its upper half pokes
+       above. For the bottom half, the text's bottom edge sits at the card's bottom, mirroring it. */
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-text {
+      position: absolute;
+      inset-inline: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      block-size: 200%;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      font-weight: inherit;
+      color: inherit;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--top .ss-sticky-cb__digit-text,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-top .ss-sticky-cb__digit-text {
+      inset-block-start: 0;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--bot .ss-sticky-cb__digit-text,
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit-card--flip-bot .ss-sticky-cb__digit-text {
+      inset-block-end: 0;
+    }
+
+    /* Visible hinge line between the halves. */
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: calc(50% - 1px);
+      block-size: 2px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 100%);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit--flipping .ss-sticky-cb__digit-card--flip-top {
+      animation: ss-sticky-cb-fold-{{ sid }} 0.3s ease-in forwards;
+    }
+
+    .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit--flipping .ss-sticky-cb__digit-card--flip-bot {
+      animation: ss-sticky-cb-unfold-{{ sid }} 0.3s 0.3s ease-out forwards;
+    }
+
+    @keyframes ss-sticky-cb-fold-{{ sid }} {
+      0% { transform: rotateX(0); }
+      100% { transform: rotateX(-90deg); }
+    }
+
+    @keyframes ss-sticky-cb-unfold-{{ sid }} {
+      0% { transform: rotateX(90deg); }
+      100% { transform: rotateX(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit--flipping .ss-sticky-cb__digit-card--flip-top,
+      .ss-sticky-cb__num-{{ sid }} .ss-sticky-cb__digit--flipping .ss-sticky-cb__digit-card--flip-bot {
+        animation: none;
+      }
+    }
+
+    .ss-sticky-cb__unit-{{ sid }} {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55em;
+    }
+
+    /* Column-flex units don't have a clean inline baseline. Align units to the bottom so labels
+       line up across hours/minutes/seconds even if any one of them wraps content. */
+    .ss-sticky-cb__timer-{{ sid }} {
+      align-items: flex-end;
+    }
+  {% endif %}
+
+  .ss-sticky-cb__code-{{ sid }} {
+    appearance: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    padding-block: 0.65em;
+    padding-inline: 1.25em;
+    border: 1px dashed var(--sscb-code-border);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border-radius: 999px;
+    color: var(--sscb-code);
+    font: inherit;
+    font-size: var(--sscb-label-size);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    line-height: 1;
+    margin: 0;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      scale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Base hover/focus: subtle background + solid border so the chip always reads as interactive,
+     even when the hover animation is turned off. */
+  .ss-sticky-cb__code-{{ sid }}:hover,
+  .ss-sticky-cb__code-{{ sid }}:focus-visible {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-color: var(--sscb-code-border);
+    border-style: solid;
+  }
+
+  .ss-sticky-cb__code-{{ sid }}:active {
+    scale: 0.98;
+  }
+
+  .ss-sticky-cb__code-icon-{{ sid }} {
+    display: inline-flex;
+    inline-size: 1em;
+    block-size: 1em;
+    transition: rotate 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), scale 0.3s ease;
+  }
+
+  .ss-sticky-cb__code-icon-{{ sid }} svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  {%- if s.code_hover -%}
+  /* Hover animation: shimmer sweep + lift + icon nudge. Gated by the "Hover animation" setting. */
+  .ss-sticky-cb__code-{{ sid }}::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -120%;
+    inline-size: 120%;
+    background: linear-gradient(
+      120deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: translate 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .ss-sticky-cb__code-{{ sid }}:hover,
+  .ss-sticky-cb__code-{{ sid }}:focus-visible {
+    scale: 1.03;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.35),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .ss-sticky-cb__code-{{ sid }}:hover::before,
+  .ss-sticky-cb__code-{{ sid }}:focus-visible::before {
+    translate: 200% 0;
+  }
+
+  .ss-sticky-cb__code-{{ sid }}:hover .ss-sticky-cb__code-icon-{{ sid }},
+  .ss-sticky-cb__code-{{ sid }}:focus-visible .ss-sticky-cb__code-icon-{{ sid }} {
+    rotate: -12deg;
+    scale: 1.1;
+  }
+  {%- endif -%}
+
+  /* Confirmation state: copy text + clipboard swap to success text + check icon. The whole button
+     gets a soft green glow plus a brief micro-pop for premium feedback. */
+  .ss-sticky-cb__code-{{ sid }}[data-copied='1'] {
+    background:
+      linear-gradient(135deg, rgba(40, 200, 110, 0.22) 0%, rgba(40, 200, 110, 0.05) 100%);
+    border-color: rgba(40, 200, 110, 0.7);
+    border-style: solid;
+    box-shadow:
+      0 6px 24px rgba(40, 200, 110, 0.25),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    animation: ss-sticky-cb-pop-{{ sid }} 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .ss-sticky-cb__code-{{ sid }}[data-copied='1'] .ss-sticky-cb__code-icon-{{ sid }} {
+    rotate: 0deg;
+    scale: 1.05;
+  }
+
+  @keyframes ss-sticky-cb-pop-{{ sid }} {
+    0%   { scale: 1; }
+    45%  { scale: 1.06; }
+    100% { scale: 1.03; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ss-sticky-cb__code-{{ sid }},
+    .ss-sticky-cb__code-{{ sid }}::before,
+    .ss-sticky-cb__code-icon-{{ sid }} {
+      transition: none;
+      animation: none;
+    }
+    .ss-sticky-cb__code-{{ sid }}:hover,
+    .ss-sticky-cb__code-{{ sid }}:focus-visible {
+      scale: 1;
+    }
+  }
+
+  {%- if s.show_close -%}
+    /* Reserve right-edge space for the close button so flex content never tucks under it. */
+    .ss-sticky-cb__card-{{ sid }} {
+      padding-inline-end: 3rem;
+    }
+
+    .ss-sticky-cb__close-{{ sid }} {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-end: 0.5rem;
+      translate: 0 -50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      /* Tap target grows with the icon, keeping ~14px of breathing room around it so the button
+         stays comfortably clickable on touch. */
+      inline-size: calc(var(--sscb-close-size) + 14px);
+      block-size: calc(var(--sscb-close-size) + 14px);
+      padding: 0;
+      margin: 0;
+      border: 0;
+      background: transparent;
+      color: var(--sscb-close);
+      cursor: pointer;
+      border-radius: 999px;
+      opacity: 0.7;
+      transition:
+        opacity 0.2s ease,
+        background 0.2s ease,
+        scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 2;
+      appearance: none;
+    }
+
+    .ss-sticky-cb__close-{{ sid }} svg {
+      inline-size: var(--sscb-close-size);
+      block-size: var(--sscb-close-size);
+    }
+
+    /* Hover background derives from the close color so light icons get a soft white wash and dark
+       icons get a soft dark wash. Falls back to a neutral tint where color-mix isn't supported. */
+    .ss-sticky-cb__close-{{ sid }}:hover,
+    .ss-sticky-cb__close-{{ sid }}:focus-visible {
+      opacity: 1;
+      background: rgba(127, 127, 127, 0.18);
+      background: color-mix(in srgb, var(--sscb-close) 14%, transparent);
+      scale: 1.1;
+    }
+
+    .ss-sticky-cb__close-{{ sid }}:active {
+      scale: 0.95;
+    }
+
+    /* Slide-up + fade dismissal. JS sets the attribute, transition runs, then JS hides the node
+       and re-applies the shared header-push layout. */
+    .ss-sticky-cb-{{ sid }} {
+      transition:
+        opacity 0.3s ease,
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ss-sticky-cb-{{ sid }}[data-sscb-closing='1'] {
+      opacity: 0;
+      transform: translateY(-100%);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ss-sticky-cb__close-{{ sid }},
+      .ss-sticky-cb-{{ sid }} {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 749px) {
+      .ss-sticky-cb__card-{{ sid }} {
+        padding-inline-end: 2.5rem;
+      }
+      /* On stacked mobile, dock the close at the top corner instead of vertically centering, so it
+         sits next to the title row rather than floating mid-card. */
+      .ss-sticky-cb__close-{{ sid }} {
+        inset-block-start: 0.4rem;
+        translate: 0 0;
+      }
+    }
+  {%- endif -%}
+
+  .ss-sticky-cb__sr-{{ sid }} {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 749px) {
+    .ss-sticky-cb-{{ sid }} {
+      --sscb-title-size: {{ s.title_size_mobile }}px;
+      --sscb-number-size: {{ s.number_size_mobile }}px;
+      --sscb-gap: {{ s.gap_mobile }}px;
+    }
+    .ss-sticky-cb__timer-{{ sid }} {
+      gap: 0.35em 0.85em;
+    }
+    .ss-sticky-cb__card-{{ sid }} {
+      padding-inline: 0.85rem;
+      flex-direction: column;
+    }
+    {%- if s.static_on_mobile -%}
+      /* Merchant opted to disable sticky/fixed behavior on mobile: bar scrolls with page. */
+      .ss-sticky-cb-{{ sid }} {
+        position: static;
+        inset-block-start: auto;
+      }
+    {%- endif -%}
+  }
+
+  {%- if s.position_mode == 'fixed' -%}
+    /* Fixed bars are out of normal flow, so reserve their height at the top of the page. This is a
+       pre-paint estimate; JS replaces it with the exact measured value on load. Padding the page
+       (rather than pushing the header element) keeps transparent / overlay headers intact. */
+    body {
+      padding-block-start: calc(
+        32px
+        + {{ s.title_size }}px * 1.2
+        + {{ s.number_size }}px * 1
+        + 4rem
+        + {{ s.top_offset }}px
+      );
+    }
+  {%- endif -%}
+
+  {% if s.position_mode == 'sticky' %}
+    /* Sticky inside a section wrapper only sticks for ~bar height because the auto wrapper is its
+       containing block. display:contents removes that wrapper's box so the bar's containing block
+       becomes the next ancestor (<main> in templates, <body> in header-groups), letting it stick
+       across the full page scroll. */
+    .shopify-section:has(> .ss-sticky-cb-{{ sid }}) {
+      display: contents;
+    }
+  {% endif %}
+
+  {%- comment -%}
+    Keep the theme's own sticky / scroll-up-reveal header BELOW the bar instead of letting both pin
+    to the top and overlap. We offset ONLY the element that actually becomes sticky on scroll:
+
+      - Dawn (+ derivatives): the header section gets `.shopify-section-header-sticky` added on
+        scroll. We exclude `.shopify-section-header-hidden` so Dawn's hide-on-scroll-down keeps
+        working; the offset applies only to the revealed (scroll-up) state.
+      - Other themes: point the "Insert above element" selector at their sticky header.
+
+    Touching only the sticky state means a transparent "at the top" header keeps its resting
+    position and styling (that aggressive margin push was what deformed it in fixed mode before).
+    --ss-bar-target-margin (bar height + top offset) is set by JS in BOTH modes and shared with
+    ss-sticky-bar so multiple top bars stack.
+  {%- endcomment -%}
+  .shopify-section-header-sticky:not(.shopify-section-header-hidden){% if s.target_selector != blank %},
+  {{ s.target_selector }}{% endif %} {
+    inset-block-start: var(--ss-bar-target-margin, 0px) !important;
+  }
+
+  {% if s.position_mode == 'fixed' %}
+    /* Some Dawn derivatives wrap the header in <header-component>; keep it laying out as a block. */
+    header-component { display: block; }
+  {% endif %}
+</style>
+
+<div
+  class="ss-sticky-cb-{{ sid }}"
+  role="region"
+  aria-label="Countdown"
+  data-ss-bar-id="{{ sid }}"
+  data-sscb-id="{{ sid }}"
+  data-skip-subtree-update
+>
+  <div class="ss-sticky-cb__card-{{ sid }}">
+    {%- if s.title != blank -%}
+      <div class="ss-sticky-cb__title-{{ sid }}">{{ s.title }}</div>
+    {%- endif -%}
+
+    <div class="ss-sticky-cb__timer-{{ sid }}" aria-live="off">
+      {%- capture digit_placeholder -%}
+        {%- if s.number_style == 'tiles' -%}
+          {%- for i in (1..2) -%}
+            <span class="ss-sticky-cb__digit" data-current="0">
+              <span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--top"><span class="ss-sticky-cb__digit-text">0</span></span>
+              <span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--bot"><span class="ss-sticky-cb__digit-text">0</span></span>
+              <span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--flip-top" aria-hidden="true"><span class="ss-sticky-cb__digit-text">0</span></span>
+              <span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--flip-bot" aria-hidden="true"><span class="ss-sticky-cb__digit-text">0</span></span>
+            </span>
+          {%- endfor -%}
+        {%- else -%}
+          00
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- if s.show_days -%}
+        <span class="ss-sticky-cb__unit-{{ sid }}">
+          <span class="ss-sticky-cb__num-{{ sid }}" data-unit="days">{{ digit_placeholder }}</span>
+          <span class="ss-sticky-cb__label-{{ sid }}">{{ s.label_days | escape }}</span>
+        </span>
+      {%- endif -%}
+      <span class="ss-sticky-cb__unit-{{ sid }}">
+        <span class="ss-sticky-cb__num-{{ sid }}" data-unit="hours">{{ digit_placeholder }}</span>
+        <span class="ss-sticky-cb__label-{{ sid }}">{{ s.label_hours | escape }}</span>
+      </span>
+      <span class="ss-sticky-cb__unit-{{ sid }}">
+        <span class="ss-sticky-cb__num-{{ sid }}" data-unit="minutes">{{ digit_placeholder }}</span>
+        <span class="ss-sticky-cb__label-{{ sid }}">{{ s.label_minutes | escape }}</span>
+      </span>
+      <span class="ss-sticky-cb__unit-{{ sid }}">
+        <span class="ss-sticky-cb__num-{{ sid }}" data-unit="seconds">{{ digit_placeholder }}</span>
+        <span class="ss-sticky-cb__label-{{ sid }}">{{ s.label_seconds | escape }}</span>
+      </span>
+      <span class="ss-sticky-cb__sr-{{ sid }}" aria-live="polite" data-sscb-sr></span>
+    </div>
+
+    {%- if s.show_code and s.code != blank -%}
+      {%- if code_is_link -%}
+        <a class="ss-sticky-cb__code-{{ sid }}" href="{{ code_href }}">
+          <span>
+            <span class="ss-sticky-cb__code-text-{{ sid }}">{{ s.code | escape }}</span>
+            <span class="ss-sticky-cb__code-icon-{{ sid }}" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </span>
+        </a>
+      {%- else -%}
+        <button
+          type="button"
+          class="ss-sticky-cb__code-{{ sid }}"
+          data-sscb-copy
+          data-code="{{ s.code | escape }}"
+          aria-label="Copy discount code {{ s.code | escape }}"
+        >
+          <span data-sscb-code-content>
+            <span class="ss-sticky-cb__code-text-{{ sid }}">{{ s.code | escape }}</span>
+            <span class="ss-sticky-cb__code-icon-{{ sid }}" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </span>
+          </span>
+          {%- comment -%}
+            Success state is cloned from a template on copy. Inline so the feedback text appears
+            inside the same chip rather than as a floating tooltip — matches the reference UX.
+          {%- endcomment -%}
+          <template data-sscb-success-template>
+            <span class="ss-sticky-cb__code-text-{{ sid }}">{{ s.code_success | escape }}</span>
+            <span class="ss-sticky-cb__code-icon-{{ sid }}" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+          </template>
+        </button>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if s.show_close -%}
+      <button
+        type="button"
+        class="ss-sticky-cb__close-{{ sid }}"
+        data-sscb-close
+        aria-label="Dismiss countdown bar"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true">
+          <path d="M18 6L6 18"/>
+          <path d="M6 6l12 12"/>
+        </svg>
+      </button>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var sid = {{ sid | json }};
+    var mode = {{ s.mode | json }};
+    var numberStyle = {{ s.number_style | json }};
+    var hideWhenExpired = {{ s.hide_when_expired | json }};
+    var showDays = {{ s.show_days | json }};
+    var endIso = {{ end_iso | json }};
+    var resetHour = parseInt({{ s.reset_hour | json }}, 10) || 0;
+    var resetMinute = parseInt({{ s.reset_minute | json }}, 10) || 0;
+    var resetWeekday = parseInt({{ s.reset_weekday | json }}, 10) || 0;
+
+    var positionMode = {{ s.position_mode | json }};
+    var staticOnMobile = {{ s.static_on_mobile | json }};
+    var showClose = {{ s.show_close | json }};
+    var topOffset = parseInt({{ s.top_offset | json }}, 10) || 0;
+    var targetSelector = {{ s.target_selector | json }};
+
+    var CLOSE_STORAGE_KEY = 'sscb-closed:' + {{ sid | json }};
+    var CLOSE_ANIM_MS = 320;
+
+    var MOBILE_MQ = window.matchMedia ? window.matchMedia('(max-width: 749px)') : null;
+
+    var ns = window.__SSCB__ = window.__SSCB__ || {};
+    var node = null;
+    var targetMs = 0;
+
+    function destroyInstance(id) {
+      var rec = ns[id];
+      if (!rec) return;
+      if (rec.interval) { clearInterval(rec.interval); }
+      if (rec.ro) { try { rec.ro.disconnect(); } catch (e) {} }
+      if (rec.mqListener && MOBILE_MQ) {
+        if (MOBILE_MQ.removeEventListener) MOBILE_MQ.removeEventListener('change', rec.mqListener);
+        else if (MOBILE_MQ.removeListener) MOBILE_MQ.removeListener(rec.mqListener);
+      }
+      delete ns[id];
+    }
+
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+    function getTargetMs() {
+      var now = new Date();
+      if (mode === 'fixed_date') {
+        var t = new Date(endIso);
+        if (isNaN(t.getTime())) return now.getTime();
+        return t.getTime();
+      }
+      if (mode === 'daily') {
+        var d = new Date(now);
+        d.setHours(resetHour, resetMinute, 0, 0);
+        if (d.getTime() <= now.getTime()) d.setDate(d.getDate() + 1);
+        return d.getTime();
+      }
+      if (mode === 'weekly') {
+        var d2 = new Date(now);
+        var diff = (resetWeekday - d2.getDay() + 7) % 7;
+        d2.setDate(d2.getDate() + diff);
+        d2.setHours(resetHour, resetMinute, 0, 0);
+        if (d2.getTime() <= now.getTime()) d2.setDate(d2.getDate() + 7);
+        return d2.getTime();
+      }
+      return now.getTime();
+    }
+
+    var FLIP_TOTAL_MS = 600;
+    var REDUCE_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    function buildFlipStructure(el, padded) {
+      var html = '';
+      for (var i = 0; i < padded.length; i++) {
+        var c = padded.charAt(i);
+        html +=
+          '<span class="ss-sticky-cb__digit" data-current="' + c + '">' +
+            '<span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--top"><span class="ss-sticky-cb__digit-text">' + c + '</span></span>' +
+            '<span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--bot"><span class="ss-sticky-cb__digit-text">' + c + '</span></span>' +
+            '<span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--flip-top" aria-hidden="true"><span class="ss-sticky-cb__digit-text">' + c + '</span></span>' +
+            '<span class="ss-sticky-cb__digit-card ss-sticky-cb__digit-card--flip-bot" aria-hidden="true"><span class="ss-sticky-cb__digit-text">' + c + '</span></span>' +
+          '</span>';
+      }
+      el.innerHTML = html;
+    }
+
+    function flipDigit(digit, newChar, instant) {
+      var current = digit.getAttribute('data-current');
+      if (current === newChar) return;
+
+      var topText = digit.querySelector('.ss-sticky-cb__digit-card--top .ss-sticky-cb__digit-text');
+      var botText = digit.querySelector('.ss-sticky-cb__digit-card--bot .ss-sticky-cb__digit-text');
+      var flipTopText = digit.querySelector('.ss-sticky-cb__digit-card--flip-top .ss-sticky-cb__digit-text');
+      var flipBotText = digit.querySelector('.ss-sticky-cb__digit-card--flip-bot .ss-sticky-cb__digit-text');
+      if (!topText || !botText || !flipTopText || !flipBotText) return;
+
+      if (instant || REDUCE_MOTION) {
+        topText.textContent = newChar;
+        botText.textContent = newChar;
+        flipTopText.textContent = newChar;
+        flipBotText.textContent = newChar;
+        digit.setAttribute('data-current', newChar);
+        return;
+      }
+
+      // Pre-animation state:
+      //   top      = NEW (revealed when flip-top folds down)
+      //   bot      = OLD (still visible until flip-bot covers it)
+      //   flip-top = OLD (the card that falls forward)
+      //   flip-bot = NEW (the card that swings up from 90deg)
+      topText.textContent = newChar;
+      flipTopText.textContent = current;
+      flipBotText.textContent = newChar;
+      // bot keeps OLD until the unfold finishes.
+
+      digit.setAttribute('data-current', newChar);
+      digit.classList.remove('ss-sticky-cb__digit--flipping');
+      // Force reflow so removing+adding the class restarts the animation.
+      void digit.offsetWidth;
+      digit.classList.add('ss-sticky-cb__digit--flipping');
+
+      if (digit._sscbFlipTimer) clearTimeout(digit._sscbFlipTimer);
+      digit._sscbFlipTimer = setTimeout(function () {
+        // Sync all four layers to NEW before clearing the flipping class so the flip-top card
+        // doesn't snap back showing the OLD digit on top of the now-correct static --top.
+        flipTopText.textContent = newChar;
+        botText.textContent = newChar;
+        digit.classList.remove('ss-sticky-cb__digit--flipping');
+      }, FLIP_TOTAL_MS);
+    }
+
+    var ROLL_TOTAL_MS = 400;
+
+    function setUnit(el, value, instant) {
+      var padded = pad(value);
+      if (numberStyle === 'tiles') {
+        var digits = el.querySelectorAll(':scope > .ss-sticky-cb__digit');
+        if (digits.length !== padded.length) {
+          buildFlipStructure(el, padded);
+          return;
+        }
+        for (var i = 0; i < padded.length; i++) {
+          flipDigit(digits[i], padded.charAt(i), instant);
+        }
+      } else {
+        if (el.textContent === padded) return;
+        if (instant || REDUCE_MOTION) {
+          el.textContent = padded;
+          return;
+        }
+        // Swap text and trigger the roll animation in the same frame, matching the reference. The
+        // brain interpolates the down-out + up-in as a single roll because opacity wipes to 0 at
+        // the seam.
+        el.textContent = padded;
+        el.setAttribute('data-changing', '1');
+        if (el._sscbRollTimer) clearTimeout(el._sscbRollTimer);
+        el._sscbRollTimer = setTimeout(function () {
+          el.removeAttribute('data-changing');
+        }, ROLL_TOTAL_MS);
+      }
+    }
+
+    var firstRender = true;
+
+    function render(distance) {
+      if (!node) return;
+      if (distance < 0) distance = 0;
+      var d = Math.floor(distance / 86400000);
+      var h = Math.floor((distance % 86400000) / 3600000);
+      var m = Math.floor((distance % 3600000) / 60000);
+      var sec = Math.floor((distance % 60000) / 1000);
+
+      if (!showDays) {
+        h = h + d * 24;
+      }
+
+      var instant = firstRender;
+      var units = node.querySelectorAll('[data-unit]');
+      for (var i = 0; i < units.length; i++) {
+        var u = units[i].getAttribute('data-unit');
+        if (u === 'days') setUnit(units[i], d, instant);
+        else if (u === 'hours') setUnit(units[i], h, instant);
+        else if (u === 'minutes') setUnit(units[i], m, instant);
+        else if (u === 'seconds') setUnit(units[i], sec, instant);
+      }
+      firstRender = false;
+
+      // Update screen-reader summary on minute boundaries so AT users get a periodic readout
+      // without spam every second.
+      if (sec === 0) {
+        var sr = node.querySelector('[data-sscb-sr]');
+        if (sr) {
+          var parts = [];
+          if (showDays) parts.push(d + ' days');
+          parts.push(h + ' hours');
+          parts.push(m + ' minutes');
+          sr.textContent = parts.join(', ') + ' remaining';
+        }
+      }
+    }
+
+    function tick() {
+      var now = Date.now();
+      var distance = targetMs - now;
+      if (distance <= 0) {
+        if (mode === 'fixed_date') {
+          render(0);
+          if (hideWhenExpired) {
+            node.style.display = 'none';
+            applyLayout();
+          }
+          if (ns[sid] && ns[sid].interval) { clearInterval(ns[sid].interval); ns[sid].interval = null; }
+          return;
+        }
+        targetMs = getTargetMs();
+        distance = targetMs - Date.now();
+      }
+      render(distance);
+    }
+
+    function initCountdown() {
+      targetMs = getTargetMs();
+      tick();
+      ns[sid].interval = setInterval(tick, 1000);
+    }
+
+    function initCopy() {
+      var btn = node.querySelector('[data-sscb-copy]');
+      if (!btn) return;
+      var content = btn.querySelector('[data-sscb-code-content]');
+      var successTpl = btn.querySelector('[data-sscb-success-template]');
+      if (!content || !successTpl) return;
+      var idleHTML = content.innerHTML;
+      var successHTML = successTpl.innerHTML;
+
+      btn.addEventListener('click', function () {
+        var code = btn.getAttribute('data-code') || '';
+        if (!code) return;
+        var done = function () {
+          if (btn._sscbCopyTimer) clearTimeout(btn._sscbCopyTimer);
+          btn.setAttribute('data-copied', '1');
+          content.innerHTML = successHTML;
+          btn._sscbCopyTimer = setTimeout(function () {
+            btn.removeAttribute('data-copied');
+            content.innerHTML = idleHTML;
+          }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(done).catch(fallback);
+        } else {
+          fallback();
+        }
+        function fallback() {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = code;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          } catch (e) {}
+        }
+      });
+    }
+
+    function autoDetectThemeHeader() {
+      var probes = ['#header-group', 'header.shopify-section.header-section', 'sticky-header', '.header-wrapper'];
+      for (var i = 0; i < probes.length; i++) {
+        var el = document.querySelector(probes[i]);
+        if (el) return el;
+      }
+      return null;
+    }
+
+    function applyLayout() {
+      // Shared with ss-sticky-bar: max-height across all bars sets one header-push value.
+      // Each section's script runs this idempotently.
+      var bodyBars = document.querySelectorAll('[data-ss-bar-body-pad="1"]');
+      var targetBars = document.querySelectorAll('[data-ss-bar-target-pad="1"]');
+
+      function maxBottom(list) {
+        var m = 0;
+        for (var i = 0; i < list.length; i++) {
+          var b = list[i];
+          if (b.style.display === 'none') continue;
+          var h = b.getBoundingClientRect().height;
+          var off = parseInt(b.getAttribute('data-ss-bar-top-offset') || '0', 10);
+          if (h + off > m) m = h + off;
+        }
+        return m;
+      }
+
+      // Every top bar (sticky OR fixed) defines how far the theme's sticky header must clear.
+      if (bodyBars.length || targetBars.length) {
+        var offset = Math.max(maxBottom(bodyBars), maxBottom(targetBars));
+        document.documentElement.style.setProperty('--ss-bar-target-margin', offset + 'px');
+      } else {
+        document.documentElement.style.removeProperty('--ss-bar-target-margin');
+      }
+
+      // Only fixed bars are out of flow, so only they pad the page down.
+      if (bodyBars.length) {
+        document.body.style.paddingBlockStart = maxBottom(bodyBars) + 'px';
+      } else {
+        document.body.style.removeProperty('padding-block-start');
+      }
+    }
+
+    function initPositioning() {
+      var target = null;
+      if (targetSelector) {
+        try { target = document.querySelector(targetSelector); } catch (e) {}
+      } else if (positionMode === 'fixed') {
+        target = autoDetectThemeHeader();
+      }
+
+      node.setAttribute('data-ss-bar-top-offset', String(topOffset));
+      ns[sid].target = target;
+
+      function syncPadFlags() {
+        var onMobile = MOBILE_MQ ? MOBILE_MQ.matches : false;
+        // Static-on-mobile under the breakpoint: the bar scrolls inline, so it contributes nothing
+        // to the shared offset and needs no page padding.
+        if (staticOnMobile && onMobile) {
+          node.removeAttribute('data-ss-bar-target-pad');
+          node.removeAttribute('data-ss-bar-body-pad');
+          return;
+        }
+        // Both flags feed --ss-bar-target-margin (so the theme's sticky header clears the bar).
+        // Fixed bars are out of flow and additionally pad the page; sticky bars sit in flow.
+        if (positionMode === 'fixed') {
+          node.setAttribute('data-ss-bar-body-pad', '1');
+          node.removeAttribute('data-ss-bar-target-pad');
+        } else {
+          node.setAttribute('data-ss-bar-target-pad', '1');
+          node.removeAttribute('data-ss-bar-body-pad');
+        }
+      }
+
+      syncPadFlags();
+      ns[sid].syncPadFlags = syncPadFlags;
+
+      // React to viewport crossing the mobile breakpoint so the bar can leave/re-enter the shared
+      // header-push stack without a page reload.
+      if (MOBILE_MQ && staticOnMobile) {
+        var onMqChange = function () { syncPadFlags(); applyLayout(); };
+        if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener('change', onMqChange);
+        else if (MOBILE_MQ.addListener) MOBILE_MQ.addListener(onMqChange);
+        ns[sid].mqListener = onMqChange;
+      }
+
+      applyLayout();
+
+      if (typeof ResizeObserver !== 'undefined') {
+        var ro = new ResizeObserver(applyLayout);
+        ro.observe(node);
+        ns[sid].ro = ro;
+      }
+    }
+
+    function hideBarPermanently() {
+      // Stop the countdown interval so a hidden bar doesn't keep doing work.
+      if (ns[sid] && ns[sid].interval) {
+        clearInterval(ns[sid].interval);
+        ns[sid].interval = null;
+      }
+      node.style.display = 'none';
+      applyLayout();
+    }
+
+    function initClose() {
+      if (!showClose) return;
+      var btn = node.querySelector('[data-sscb-close]');
+      if (!btn) return;
+
+      // Theme editor stays interactive on close so merchants can repeatedly test the dismissal
+      // without clearing storage. On the storefront, dismissal persists for the session.
+      var isDesignMode = !!(window.Shopify && window.Shopify.designMode);
+
+      if (!isDesignMode) {
+        try {
+          if (window.sessionStorage && sessionStorage.getItem(CLOSE_STORAGE_KEY) === '1') {
+            hideBarPermanently();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      btn.addEventListener('click', function () {
+        node.setAttribute('data-sscb-closing', '1');
+        if (!isDesignMode) {
+          try { sessionStorage.setItem(CLOSE_STORAGE_KEY, '1'); } catch (e) {}
+        }
+        setTimeout(hideBarPermanently, CLOSE_ANIM_MS);
+      });
+    }
+
+    function init() {
+      // Clear any prior instance for this sid (theme-editor hot reload, morphed HTML, etc.).
+      destroyInstance(sid);
+      node = document.querySelector('[data-sscb-id="' + sid + '"]');
+      if (!node) return;
+      ns[sid] = { interval: null, ro: null };
+      initCountdown();
+      initCopy();
+      initClose();
+      initPositioning();
+    }
+
+    function cleanup(sectionId) {
+      if (!sectionId) return;
+      destroyInstance(sectionId);
+      setTimeout(applyLayout, 0);
+    }
+
+    // Theme editor only; section:load re-runs this inline script so init re-fires on its own.
+    // Bound once per page so re-injections don't stack listeners.
+    if (!window.__ssStickyCbEvtBound) {
+      window.__ssStickyCbEvtBound = true;
+      document.addEventListener('shopify:section:unload', function (e) {
+        cleanup(e.detail && e.detail.sectionId);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "SS - Sticky countdown IA",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Schedule"
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Mode",
+      "default": "daily",
+      "options": [
+        {
+          "value": "fixed_date",
+          "label": "Fixed date"
+        },
+        {
+          "value": "daily",
+          "label": "Reset daily"
+        },
+        {
+          "value": "weekly",
+          "label": "Reset weekly"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "end_year",
+      "label": "Year",
+      "default": "2026",
+      "options": [
+        {
+          "value": "2026",
+          "label": "2026"
+        },
+        {
+          "value": "2027",
+          "label": "2027"
+        },
+        {
+          "value": "2028",
+          "label": "2028"
+        },
+        {
+          "value": "2029",
+          "label": "2029"
+        },
+        {
+          "value": "2030",
+          "label": "2030"
+        },
+        {
+          "value": "2031",
+          "label": "2031"
+        },
+        {
+          "value": "2032",
+          "label": "2032"
+        },
+        {
+          "value": "2033",
+          "label": "2033"
+        },
+        {
+          "value": "2034",
+          "label": "2034"
+        },
+        {
+          "value": "2035",
+          "label": "2035"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "select",
+      "id": "end_month",
+      "label": "Month",
+      "default": "11",
+      "options": [
+        {
+          "value": "01",
+          "label": "January"
+        },
+        {
+          "value": "02",
+          "label": "February"
+        },
+        {
+          "value": "03",
+          "label": "March"
+        },
+        {
+          "value": "04",
+          "label": "April"
+        },
+        {
+          "value": "05",
+          "label": "May"
+        },
+        {
+          "value": "06",
+          "label": "June"
+        },
+        {
+          "value": "07",
+          "label": "July"
+        },
+        {
+          "value": "08",
+          "label": "August"
+        },
+        {
+          "value": "09",
+          "label": "September"
+        },
+        {
+          "value": "10",
+          "label": "October"
+        },
+        {
+          "value": "11",
+          "label": "November"
+        },
+        {
+          "value": "12",
+          "label": "December"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "select",
+      "id": "end_day",
+      "label": "Day",
+      "default": "28",
+      "options": [
+        {
+          "value": "01",
+          "label": "01"
+        },
+        {
+          "value": "02",
+          "label": "02"
+        },
+        {
+          "value": "03",
+          "label": "03"
+        },
+        {
+          "value": "04",
+          "label": "04"
+        },
+        {
+          "value": "05",
+          "label": "05"
+        },
+        {
+          "value": "06",
+          "label": "06"
+        },
+        {
+          "value": "07",
+          "label": "07"
+        },
+        {
+          "value": "08",
+          "label": "08"
+        },
+        {
+          "value": "09",
+          "label": "09"
+        },
+        {
+          "value": "10",
+          "label": "10"
+        },
+        {
+          "value": "11",
+          "label": "11"
+        },
+        {
+          "value": "12",
+          "label": "12"
+        },
+        {
+          "value": "13",
+          "label": "13"
+        },
+        {
+          "value": "14",
+          "label": "14"
+        },
+        {
+          "value": "15",
+          "label": "15"
+        },
+        {
+          "value": "16",
+          "label": "16"
+        },
+        {
+          "value": "17",
+          "label": "17"
+        },
+        {
+          "value": "18",
+          "label": "18"
+        },
+        {
+          "value": "19",
+          "label": "19"
+        },
+        {
+          "value": "20",
+          "label": "20"
+        },
+        {
+          "value": "21",
+          "label": "21"
+        },
+        {
+          "value": "22",
+          "label": "22"
+        },
+        {
+          "value": "23",
+          "label": "23"
+        },
+        {
+          "value": "24",
+          "label": "24"
+        },
+        {
+          "value": "25",
+          "label": "25"
+        },
+        {
+          "value": "26",
+          "label": "26"
+        },
+        {
+          "value": "27",
+          "label": "27"
+        },
+        {
+          "value": "28",
+          "label": "28"
+        },
+        {
+          "value": "29",
+          "label": "29"
+        },
+        {
+          "value": "30",
+          "label": "30"
+        },
+        {
+          "value": "31",
+          "label": "31"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "select",
+      "id": "end_hour",
+      "label": "Hour",
+      "default": "23",
+      "options": [
+        {
+          "value": "00",
+          "label": "12 AM"
+        },
+        {
+          "value": "01",
+          "label": "1 AM"
+        },
+        {
+          "value": "02",
+          "label": "2 AM"
+        },
+        {
+          "value": "03",
+          "label": "3 AM"
+        },
+        {
+          "value": "04",
+          "label": "4 AM"
+        },
+        {
+          "value": "05",
+          "label": "5 AM"
+        },
+        {
+          "value": "06",
+          "label": "6 AM"
+        },
+        {
+          "value": "07",
+          "label": "7 AM"
+        },
+        {
+          "value": "08",
+          "label": "8 AM"
+        },
+        {
+          "value": "09",
+          "label": "9 AM"
+        },
+        {
+          "value": "10",
+          "label": "10 AM"
+        },
+        {
+          "value": "11",
+          "label": "11 AM"
+        },
+        {
+          "value": "12",
+          "label": "12 PM"
+        },
+        {
+          "value": "13",
+          "label": "1 PM"
+        },
+        {
+          "value": "14",
+          "label": "2 PM"
+        },
+        {
+          "value": "15",
+          "label": "3 PM"
+        },
+        {
+          "value": "16",
+          "label": "4 PM"
+        },
+        {
+          "value": "17",
+          "label": "5 PM"
+        },
+        {
+          "value": "18",
+          "label": "6 PM"
+        },
+        {
+          "value": "19",
+          "label": "7 PM"
+        },
+        {
+          "value": "20",
+          "label": "8 PM"
+        },
+        {
+          "value": "21",
+          "label": "9 PM"
+        },
+        {
+          "value": "22",
+          "label": "10 PM"
+        },
+        {
+          "value": "23",
+          "label": "11 PM"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "select",
+      "id": "end_minute",
+      "label": "Minute",
+      "default": "59",
+      "options": [
+        {
+          "value": "00",
+          "label": ":00"
+        },
+        {
+          "value": "05",
+          "label": ":05"
+        },
+        {
+          "value": "10",
+          "label": ":10"
+        },
+        {
+          "value": "15",
+          "label": ":15"
+        },
+        {
+          "value": "20",
+          "label": ":20"
+        },
+        {
+          "value": "25",
+          "label": ":25"
+        },
+        {
+          "value": "30",
+          "label": ":30"
+        },
+        {
+          "value": "35",
+          "label": ":35"
+        },
+        {
+          "value": "40",
+          "label": ":40"
+        },
+        {
+          "value": "45",
+          "label": ":45"
+        },
+        {
+          "value": "50",
+          "label": ":50"
+        },
+        {
+          "value": "55",
+          "label": ":55"
+        },
+        {
+          "value": "59",
+          "label": ":59"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "Hide when expired",
+      "default": true,
+      "visible_if": "{{ section.settings.mode == 'fixed_date' }}"
+    },
+    {
+      "type": "select",
+      "id": "reset_weekday",
+      "label": "Reset day",
+      "default": "1",
+      "options": [
+        {
+          "value": "0",
+          "label": "Sunday"
+        },
+        {
+          "value": "1",
+          "label": "Monday"
+        },
+        {
+          "value": "2",
+          "label": "Tuesday"
+        },
+        {
+          "value": "3",
+          "label": "Wednesday"
+        },
+        {
+          "value": "4",
+          "label": "Thursday"
+        },
+        {
+          "value": "5",
+          "label": "Friday"
+        },
+        {
+          "value": "6",
+          "label": "Saturday"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'weekly' }}"
+    },
+    {
+      "type": "select",
+      "id": "reset_hour",
+      "label": "Reset hour",
+      "default": "00",
+      "info": "Visitor's local time.",
+      "options": [
+        {
+          "value": "00",
+          "label": "12 AM"
+        },
+        {
+          "value": "01",
+          "label": "1 AM"
+        },
+        {
+          "value": "02",
+          "label": "2 AM"
+        },
+        {
+          "value": "03",
+          "label": "3 AM"
+        },
+        {
+          "value": "04",
+          "label": "4 AM"
+        },
+        {
+          "value": "05",
+          "label": "5 AM"
+        },
+        {
+          "value": "06",
+          "label": "6 AM"
+        },
+        {
+          "value": "07",
+          "label": "7 AM"
+        },
+        {
+          "value": "08",
+          "label": "8 AM"
+        },
+        {
+          "value": "09",
+          "label": "9 AM"
+        },
+        {
+          "value": "10",
+          "label": "10 AM"
+        },
+        {
+          "value": "11",
+          "label": "11 AM"
+        },
+        {
+          "value": "12",
+          "label": "12 PM"
+        },
+        {
+          "value": "13",
+          "label": "1 PM"
+        },
+        {
+          "value": "14",
+          "label": "2 PM"
+        },
+        {
+          "value": "15",
+          "label": "3 PM"
+        },
+        {
+          "value": "16",
+          "label": "4 PM"
+        },
+        {
+          "value": "17",
+          "label": "5 PM"
+        },
+        {
+          "value": "18",
+          "label": "6 PM"
+        },
+        {
+          "value": "19",
+          "label": "7 PM"
+        },
+        {
+          "value": "20",
+          "label": "8 PM"
+        },
+        {
+          "value": "21",
+          "label": "9 PM"
+        },
+        {
+          "value": "22",
+          "label": "10 PM"
+        },
+        {
+          "value": "23",
+          "label": "11 PM"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'daily' or section.settings.mode == 'weekly' }}"
+    },
+    {
+      "type": "select",
+      "id": "reset_minute",
+      "label": "Reset minute",
+      "default": "00",
+      "options": [
+        {
+          "value": "00",
+          "label": ":00"
+        },
+        {
+          "value": "05",
+          "label": ":05"
+        },
+        {
+          "value": "10",
+          "label": ":10"
+        },
+        {
+          "value": "15",
+          "label": ":15"
+        },
+        {
+          "value": "20",
+          "label": ":20"
+        },
+        {
+          "value": "25",
+          "label": ":25"
+        },
+        {
+          "value": "30",
+          "label": ":30"
+        },
+        {
+          "value": "35",
+          "label": ":35"
+        },
+        {
+          "value": "40",
+          "label": ":40"
+        },
+        {
+          "value": "45",
+          "label": ":45"
+        },
+        {
+          "value": "50",
+          "label": ":50"
+        },
+        {
+          "value": "55",
+          "label": ":55"
+        }
+      ],
+      "visible_if": "{{ section.settings.mode == 'daily' or section.settings.mode == 'weekly' }}"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "❤️ <b>BLACK FRIDAY</b> ❤️"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_days",
+      "label": "Show days",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Days",
+      "default": "Days",
+      "visible_if": "{{ section.settings.show_days }}"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Hours",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "label_minutes",
+      "label": "Minutes",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "label_seconds",
+      "label": "Seconds",
+      "default": "Seconds"
+    },
+    {
+      "type": "select",
+      "id": "number_style",
+      "label": "Number style",
+      "default": "inline",
+      "options": [
+        {
+          "value": "inline",
+          "label": "Inline"
+        },
+        {
+          "value": "tiles",
+          "label": "Digit tiles"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Spacing",
+      "info": "Gap between the title, timer, and discount code."
+    },
+    {
+      "type": "range",
+      "id": "gap_desktop",
+      "label": "Desktop",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Mobile",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Discount Code"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_code",
+      "label": "Show",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "code",
+      "label": "Code",
+      "default": "STERNIFY50",
+      "visible_if": "{{ section.settings.show_code }}"
+    },
+    {
+      "type": "select",
+      "id": "code_action",
+      "label": "On click",
+      "default": "copy",
+      "options": [
+        {
+          "value": "copy",
+          "label": "Copy code"
+        },
+        {
+          "value": "link",
+          "label": "Open link"
+        }
+      ],
+      "visible_if": "{{ section.settings.show_code }}"
+    },
+    {
+      "type": "url",
+      "id": "code_url",
+      "label": "Link",
+      "info": "Leave blank to apply the code automatically.",
+      "visible_if": "{{ section.settings.show_code and section.settings.code_action == 'link' }}"
+    },
+    {
+      "type": "text",
+      "id": "code_success",
+      "label": "Copied text",
+      "default": "Copied!",
+      "visible_if": "{{ section.settings.show_code and section.settings.code_action == 'copy' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "code_hover",
+      "label": "Hover animation",
+      "default": true,
+      "visible_if": "{{ section.settings.show_code }}"
+    },
+    {
+      "type": "header",
+      "content": "Position"
+    },
+    {
+      "type": "select",
+      "id": "position_mode",
+      "label": "Mode",
+      "default": "sticky",
+      "info": "Switch to Fixed if Sticky breaks in your theme.",
+      "options": [
+        {
+          "value": "sticky",
+          "label": "Sticky"
+        },
+        {
+          "value": "fixed",
+          "label": "Fixed"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "static_on_mobile",
+      "label": "Static on mobile",
+      "info": "Bar scrolls with the page on phones.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Close button",
+      "info": "Lets visitors close the bar.",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "close_color",
+      "label": "Close color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.show_close }}"
+    },
+    {
+      "type": "range",
+      "id": "close_size",
+      "label": "Close size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14,
+      "visible_if": "{{ section.settings.show_close }}"
+    },
+    {
+      "type": "range",
+      "id": "top_offset",
+      "label": "Top offset",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.target_selector == blank }}"
+    },
+    {
+      "type": "text",
+      "id": "target_selector",
+      "label": "Insert above element",
+      "info": "Optional. The bar finds your header automatically. Only set this if it doesn't (paste the header's CSS class).",
+      "visible_if": "{{ section.settings.position_mode == 'fixed' }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_custom",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font family",
+      "default": "montserrat_n4",
+      "visible_if": "{{ section.settings.text_custom }}"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size - mobile",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "number_size",
+      "label": "Number size",
+      "min": 14,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "number_size_mobile",
+      "label": "Number size - mobile",
+      "min": 12,
+      "max": 44,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Title colors"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Timer colors"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Numbers",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Labels",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "tile_bg",
+      "label": "Digit tile",
+      "default": "#1a1a1a",
+      "visible_if": "{{ section.settings.number_style == 'tiles' }}"
+    },
+    {
+      "type": "header",
+      "content": "Discount code colors"
+    },
+    {
+      "type": "color",
+      "id": "code_color",
+      "label": "Code text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "code_border_color",
+      "label": "Code border",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Background colors"
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "label": "Background style",
+      "default": "gradient",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#0a0a0a",
+      "visible_if": "{{ section.settings.background_style == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_gradient",
+      "label": "Background gradient",
+      "default": "radial-gradient(ellipse at top, #1a0606 0%, #050505 65%)",
+      "visible_if": "{{ section.settings.background_style == 'gradient' }}"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Top glow",
+      "info": "Glow over the top. Match the background to hide it.",
+      "default": "#ff3c3c"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SS - Sticky countdown IA",
+      "settings": {
+        "mode": "daily",
+        "end_year": "2026",
+        "end_month": "11",
+        "end_day": "28",
+        "end_hour": "23",
+        "end_minute": "59",
+        "hide_when_expired": true,
+        "reset_weekday": "1",
+        "reset_hour": "00",
+        "reset_minute": "00",
+        "title": "<b>Gabrielle</b> a 51,95 € · oferta del día",
+        "show_days": false,
+        "label_days": "Días",
+        "label_hours": "Horas",
+        "label_minutes": "Min",
+        "label_seconds": "Seg",
+        "number_style": "inline",
+        "gap_desktop": 28,
+        "gap_mobile": 10,
+        "show_code": true,
+        "code": "WITAJ10",
+        "code_action": "copy",
+        "code_success": "¡Copiado!",
+        "code_hover": true,
+        "position_mode": "sticky",
+        "static_on_mobile": false,
+        "show_close": false,
+        "close_color": "#ffffff",
+        "close_size": 14,
+        "top_offset": 0,
+        "text_custom": false,
+        "text_font": "montserrat_n4",
+        "title_size": 16,
+        "title_size_mobile": 13,
+        "number_size": 18,
+        "number_size_mobile": 16,
+        "label_size": 11,
+        "title_color": "#ffffff",
+        "number_color": "#ffffff",
+        "label_color": "#d8d8d8",
+        "tile_bg": "#1a1a1a",
+        "code_color": "#ffffff",
+        "code_border_color": "#ffffff",
+        "background_style": "solid",
+        "bg_color": "#000000",
+        "bg_gradient": "radial-gradient(ellipse at top, #1a0606 0%, #050505 65%)",
+        "glow_color": "#c4b59a"
+      },
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+
