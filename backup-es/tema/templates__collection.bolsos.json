@@ -1,0 +1,289 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ticker": {
+      "type": "lf-liq-ticker",
+      "settings": {
+        "text": "Bolsos rebajados: de 70 € a 49,95 € 👜",
+        "ends": "Envío gratis · 30 días para devolver"
+      }
+    },
+    "hero": {
+      "type": "lf-liq-hero",
+      "blocks": {
+        "tier2": {
+          "type": "tier",
+          "settings": {
+            "label": "2 artículos",
+            "pct": 15
+          }
+        },
+        "tier3": {
+          "type": "tier",
+          "settings": {
+            "label": "3 artículos",
+            "pct": 20
+          }
+        },
+        "tier4": {
+          "type": "tier",
+          "settings": {
+            "label": "4 o más",
+            "pct": 25
+          }
+        }
+      },
+      "block_order": [
+        "tier2",
+        "tier3",
+        "tier4"
+      ],
+      "settings": {
+        "eyebrow": "👜 Todos los bolsos rebajados · Envío gratis",
+        "heading": "Bolsos en oferta",
+        "ends": "",
+        "intro": "<p>Bandoleras prácticas, bolsos trenzados, efecto rafia y modelos <strong>antirrobo</strong> para el día a día, <strong>todos rebajados de 70 € a 49,95 €</strong>. Y el descuento no acaba ahí: si te llevas más de un artículo (otro bolso o tus prendas favoritas), ahorras todavía más.</p>",
+        "tiers_heading": "Cuantos más artículos, más ahorras",
+        "unit": "bolso",
+        "note_stock": "<strong>Unidades limitadas.</strong> Algunos modelos y colores tienen pocas unidades: si el botón «Añadir al carrito» está activo, aún queda.",
+        "note_checkout": "<strong>No necesitas copiar ningún código:</strong> el -10% de bienvenida (BIENVENIDA10) y los descuentos por cantidad se aplican solos en el carrito. Si te corresponden los dos, se aplica el que más te ahorra.",
+        "cta": "Ver los [n] bolsos"
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": false,
+            "filter_style": "horizontal",
+            "filter_width": "centered",
+            "text_label_case": "default",
+            "show_swatch_label": false,
+            "show_filter_label": false,
+            "enable_sorting": false,
+            "enable_grid_density": false,
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "facets_margin_bottom": 0,
+            "facets_margin_right": 20
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "portrait",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "title": {
+              "type": "product-title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "paragraph",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "save": {
+              "type": "lf-card-save",
+              "settings": {
+                "text": "Ahorras",
+                "hint": ""
+              }
+            }
+          },
+          "block_order": [
+            "card-gallery",
+            "title",
+            "price",
+            "save"
+          ]
+        }
+      },
+      "settings": {
+        "layout_type": "grid",
+        "product_card_size": "medium",
+        "mobile_product_card_size": "small",
+        "enable_infinite_scroll": true,
+        "products_per_page": 24,
+        "product_grid_width": "centered",
+        "full_width_on_mobile": true,
+        "columns_gap_horizontal": 12,
+        "columns_gap_vertical": 32,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 24,
+        "padding-block-end": 40
+      }
+    },
+    "guarantees": {
+      "type": "lf-guarantee",
+      "blocks": {
+        "g1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Envío gratis con seguimiento",
+            "text": "Preparamos tu pedido en 1-3 días laborables y te enviamos el número de seguimiento para que sepas en todo momento dónde está."
+          }
+        },
+        "g2": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Pago 100% seguro",
+            "text": "Tarjeta, Apple Pay y Google Pay con cifrado SSL. Nunca vemos ni guardamos los datos de tu tarjeta."
+          }
+        },
+        "g3": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30 días para devolverlo",
+            "text": "Si algo no te convence, tienes 30 días desde que lo recibes para devolverlo, sin dar explicaciones."
+          }
+        }
+      },
+      "block_order": [
+        "g1",
+        "g2",
+        "g3"
+      ],
+      "settings": {
+        "eyebrow": "Compra sin riesgo",
+        "heading": "Por qué comprar en Lia Femme"
+      }
+    },
+    "faq": {
+      "type": "lf-faq",
+      "blocks": {
+        "q1": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Cómo funcionan los descuentos por cantidad?",
+            "a": "<p>Solos. Añade 2 artículos al carrito (bolsos o prendas, puedes mezclar) y verás un -15% extra en todo el pedido; con 3, un -20%; con 4 o más, un -25%. Se aplican sobre el precio ya rebajado y no necesitas ningún código.</p>"
+          }
+        },
+        "q2": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Qué es el código BIENVENIDA10?",
+            "a": "<p>Es nuestro regalo de bienvenida: un -10% en todo el pedido en tu primera compra. Se aplica solo en el carrito y se puede usar una vez por cliente. No se suma a los descuentos por cantidad: siempre se aplica el que más te ahorra.</p>"
+          }
+        },
+        "q3": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Cuánto tarda el envío?",
+            "a": "<p>El envío es gratis y con seguimiento. Preparamos tu pedido en 1-3 días laborables y la entrega en España y la UE tarda normalmente 7-14 días laborables.</p>"
+          }
+        },
+        "q4": {
+          "type": "qa",
+          "settings": {
+            "q": "¿Y si el bolso no es lo que esperaba?",
+            "a": "<p>Tienes 30 días naturales desde que recibes el pedido para devolverlo. Escríbenos y te explicamos cómo hacerlo.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ],
+      "settings": {
+        "eyebrow": "Ayuda",
+        "heading": "Preguntas frecuentes",
+        "contact": "¿Más dudas? Escríbenos a <a href=\"mailto:liafemme23@gmail.com\">liafemme23@gmail.com</a> y te respondemos en menos de 24 h."
+      }
+    }
+  },
+  "order": [
+    "ticker",
+    "hero",
+    "main",
+    "guarantees",
+    "faq"
+  ]
+}
