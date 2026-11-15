@@ -54,3 +54,15 @@ Tema live actual: "Zofia Nowak – v26 nuevo nombre y logo". El mercado "Polska"
 - Títulos: Montserrat 600–700 en MAYÚSCULAS. Texto: Nunito/Montserrat 400.
 - Botones: negros, rectos (radio 0–3 px), texto en mayúsculas con espaciado.
 - Se crea como copia nueva (v27) sin tocar el tema live hasta que lo apruebes.
+
+## Hecho (15/11/2026) – tema "Zofia Nowak – v27 estructura Polonia (Claude)" (sin publicar)
+- Colores blanco / negro / beige `#EDE2DA` / rojo oferta `#C40000`; letra Montserrat, títulos en MAYÚSCULAS, botones negros rectos.
+- Cabecera: logo centrado, menú nuevo "menu-polska" debajo (Damska, Męska, Bestsellery, Wyprzedaż, Nasza historia, Kontakt, Śledź zamówienie); barra beige con 3 mensajes.
+- Portada: banner → franja descuentos (2 szt. -15% · 3 szt. -20% · 4+ -25%) → Nasze bestsellery → Kolekcje (Damska/Męska) → Wyprzedaż → Nasza historia → Ponadczasowe klasyki → Nowości → 30 dni na zwrot → Opiniones (oculta hasta añadir reseñas reales) → FAQ → 4 ventajas → newsletter → footer beige.
+- Tarjetas: "OSZCZĘDŹ X%" rojo, precio tachado + rojo, "Kup 2 szt.: precio/szt.".
+- Quitados textos en español (Termina en, horas/seg, Bienvenida, Pago seguro, Todos los derechos reservados, Black Friday anticipado).
+
+## Pendiente (tú)
+- Subir fotos propias para el banner principal (2400×1100 con modelo) y para "Nasza historia" / "30 dni na zwrot" (Personalizar → sección → Foto).
+- Añadir opiniones reales en "PL · Opiniones" (o conseguir reseñas en Judge.me).
+- La colección "Jesień 2026" no está publicada en la tienda online: publícala o quita los enlaces que apuntan a ella.
