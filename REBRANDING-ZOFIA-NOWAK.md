@@ -1,7 +1,7 @@
 # Cambio de marca: Lia Femme → Zofia Nowak
 
 ## Ya hecho (por Claude, vía API)
-- [x] Logo nuevo subido a Archivos (`zofia-nowak-logo.png`, fondo transparente) + favicon con el monograma ZN.
+- [x] Logo final: **opción 1 (clásico elegante)** en la cabecera (`zofia-nowak-logo-cabecera.png`) y **monograma C** (Z | N) como icono de la pestaña (`zofia-nowak-icono.png`).
 - [x] Tema duplicado **"Zofia Nowak – v26 nuevo nombre y logo (Claude)"** con logo, favicon y todos los textos "Lia Femme" → "Zofia Nowak" (hero, "Dlaczego warto kupować w sklepie Zofia Nowak", Club Zofia Nowak, popup de bienvenida, carrito, slider, reseñas, plantillas de producto y colecciones). Copia de los archivos en `tema-zofia-nowak/`.
 - [x] Página "O nas" actualizada.
 - [x] SEO (título y descripción) de 15 colecciones actualizado.
@@ -15,10 +15,13 @@
    - Política de privacidad → pegar `politicas/politica-privacidad.html`
    - Términos del servicio → pegar `politicas/terminos-servicio.html`
    (Reembolso, envío y contacto no mencionan "Lia Femme": no hace falta tocarlas.)
-4. [ ] **Logo del checkout**: Ajustes → Checkout → Personalizar → Logo → elegir `zofia-nowak-logo.png`.
-5. [ ] **Logo de emails**: Ajustes → Notificaciones → Personalizar plantillas de email → Logo.
+4. [ ] **Logo del checkout**: Ajustes → Checkout → Personalizar → Logo → elegir `zofia-nowak-logo-cabecera.png`.
+5. [ ] **Logo de emails**: Ajustes → Notificaciones → Personalizar plantillas de email → Logo → `zofia-nowak-logo-cabecera.png`.
 6. [ ] **Apps**: Judge.me (nombre de respuesta "Lia Femme" → Zofia Nowak), Klaviyo (nombre del remitente/plantillas).
 7. [ ] Opcional: código de descuento `LIAFEMME` (sección cuenta atrás) y nombre interno del menú "Menu Lia Femme (nowe)".
 
 ## Pendiente de decidir
 - **Productos (230)**: el *proveedor* es "Lia Femme" en todos y las descripciones/SEO mencionan "Lia Femme". Se puede hacer por lotes.
+
+## Usos del monograma
+- Foto de perfil de Instagram / TikTok / Facebook: `logo/propuestas/monograma-c.png` (o el sello `monograma-b.png`).
